@@ -2,7 +2,7 @@
 [![Java Style Guide](https://img.shields.io/badge/code_style-standard-brightgreen.svg)](https://standardjs.com)
 [![Read the Docs (version)](https://img.shields.io/readthedocs/pip/stable.svg)](https://github.com/seethefruture/auxiliarytool_1)<br>
 
-# 预览<br>
+# 预览<br>(已过期)
 入口地址：http://106.13.168.81:9091/<br>
 账号：<br>
 > username-username(学生)<br>
