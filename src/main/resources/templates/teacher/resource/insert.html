@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml" >
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <!-- Admin Forms CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/admin-tools/admin-forms/css/admin-forms.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+    <script src="/js/jquery-2.2.4.js"></script>
+</head>
+<body >
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 添加资源</h2>
+        <p class="lead"></p>
+    </div>
+
+    <!-- Validation Example -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel heading-border">
+
+            <form method="post" action="/teacher/resource/doInsert" id="admin-form" enctype="multipart/form-data" >
+
+                <div class="panel-body bg-light" style="margin:auto; text-align:left;">
+
+                    <div class="section-divider mt20 mb40">
+                    </div>
+                    <!-- .section-divider -->
+                    <script>
+                        $(document).ready(function () {
+                            $("#chapter").hide();
+                            $('.section').click(function(){
+                                var courses = document.getElementsByName("course");
+                                for(var j=0;j<courses.length;j++){
+                                    if(courses[j].checked){
+                                        var courseId = courses[j].value;
+                                    }
+                                }
+                                $.ajax({
+                                    type: 'POST',
+                                    async: false,
+                                    dataType: "json",
+                                    url: '/resourceChapterShow',
+                                    timeout: 2000,
+                                    data: {
+                                        courseId:courseId
+                                    },
+                                    error: function () {
+                                        alert("局部刷新错误，点击确定刷新整个页面");
+                                    },
+                                    success: function (result) {
+
+                                        $.each(result, function (index, value) {
+                                            $("#chapter").append(
+                                                '                        <option value="' + value["chapter_num"] + '">第' + value["chapter_num"] + '单元'+value["chapter_name"]+'</option>'
+                                            )
+
+                                        });
+                                        $("#chapter").show();
+                                    }
+                                })
+                            })
+
+
+                        })
+                    </script>
+
+
+                    <div class="section">
+                        选择课程：
+                            <input type="radio"  th:each="course:${course}" th:value="${course.course_id}" th:text="${course.course_name}" name="course" >
+                    </div>
+                    <select id="chapter" name="chapter">
+
+                    </select>
+
+                    <br/>
+                    <br/>
+
+                    <div class="section">
+                        <label class="radio-inline">
+                            <input type="radio" value="1" th:text="公开" name="public">
+                        </label>
+                        <label class="radio-inline">
+                            <input type="radio" value="0" th:text="私密" name="public">
+                        </label>
+                    </div>
+                    <div class="section">
+                        <div class="input-group col-md-4">
+                            <span class="input-group-addon"><i class="glyphicon glyphicon-search"></i></span>
+                            <input class="form-control" placeholder="请选择文件" type="file" id="file" name="file" multiple="multiple"/>
+                        </div>
+                    </div>
+                    </div>
+                    <!-- end .section row section -->
+                    <!-- end section -->
+                    <!-- end .form-body section -->
+                    <div class="panel-footer text-right">
+                        <input type="submit" value="保存" class="button" >
+                    </div>
+                <script type="text/javascript">
+                    $("button").click(function(){
+                        alert('aa');
+                        // var formdata=new FormData(document.getElementById("admin-form"));
+                        // var xhr=new XMLHttpRequest();
+                        // xhr.open("post","/teacher/resource/doInsert");
+                        // xhr.send(formdata);
+                        // xhr.onload=function(){
+                        //     if(xhr.status==200){
+                        //         alert("成功！");
+                        //     }
+                        // }
+                        // var course = $("input[name='course']:checked").val();
+                        // var secrecy = $('input[name="public"]:checked').val();
+                        // var chapter = $('input[name="chapter"]:checked').val();
+                        // var f = document.getElementById("file").file;
+                        // var filename = f[0].name;
+                        // alert(course);
+                        // $.ajax({
+                        //     type: "post",
+                        //     url: "/teacher/resource/doInsert",
+                        //     dataType: "json",
+                        //     //contentType: "application/x-www-form-urlencoded",
+                        //     data: {
+                        //         course: course,
+                        //         resourceSecrecy: secrecy,
+                        //         resourceChapter: chapter,
+                        //         file:f
+                        //     },
+                        //     success: function(msg){
+                        //         if(msg=="成功"){
+                        //             alert("成功上传");
+                        //         }
+                        //         else{
+                        //             alert("失败，请重试");
+                        //         }
+                        //     },
+                        //     error:function () {
+                        //         alert("404");
+                        //     }
+                        // });
+                    });
+                </script>
+                    <!-- end .form-footer section -->
+            </form>
+
+        </div>
+
+    </div>
+    <!-- end: .admin-form -->
+
+</div>
+<!-- end: .tray-center -->
+</body>
+</html>
+
+<!--<form>-->
+    <!--选择课程：-->
+    <!--<input type="radio" th:each="course:${course}" th:value="${course.course_name}" th:text="${course.course_name}" name="course">-->
+    <!--<br/>-->
+    <!--选择章节：(默认0为教学日历）-->
+    <!--<input type="radio" th:each="i : ${#numbers.sequence(0,10)}" th:value="${i}" th:text="${i}" name="chapter">-->
+    <!--<br/>-->
+    <!--<input type="radio" value="1" th:text="公开" name="public">-->
+    <!--<input type="radio" value="0" th:text="私密" name="public">-->
+    <!--<br/>-->
+    <!--<input type="file" value="上传">-->
+    <!--<input type="button" value="确定" onclick="click()">-->
+
+<!--</form>-->

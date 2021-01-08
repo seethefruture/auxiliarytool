@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <!-- Admin Forms CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/admin-tools/admin-forms/css/admin-forms.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+
+    <script th:inline="javascript">
+        $(document).ready(function (){
+            document.getElementById("grade").value=[[${class.classGrade}]];
+            document.getElementById("name").value=[[${class.className}]];
+            document.getElementById("num").value=[[${class.classNumber}]];
+            var facultyId = [[${class.facultyId}]];
+            $("#sel option[value=facultyId]").prop("selected",true);
+        });
+
+    </script>
+</head>
+<body>
+<div class="tray tray-center">
+
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 编辑班级信息</h2>
+        <p class="lead"></p>
+    </div>
+
+    <!-- Validation Example -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel heading-border">
+
+            <form method="post" action="list.html" id="admin-form" class="form-horizontal" style="text-align:center;margin:0 auto">
+
+                <div class="panel-body bg-light">
+
+                    <div class="section-divider mt20 mb40">
+                        <span> 基本信息 </span>
+                    </div>
+                    <!-- .section-divider -->
+
+
+
+                    <div class="form-group">
+                        <label for="grade" class="col-sm-2 control-label" style="padding-left: 0px">年级</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="grade">
+                        </div>
+                    </div>
+
+                    <!--</div>-->
+                    <div class="form-group">
+                        <label for="name" class="col-sm-2 control-label">班级名</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="name">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="num" class="col-sm-2 control-label">第几班</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" id="num" >
+                        </div>
+                    </div>
+
+                    <select class="form-control" id="faculty" style="width: 786px;margin-left: 161px">
+                        <option th:each ="list:${list}" th:value="${list.facultyId}" th:text="${list.facultyName}"></option>
+                    </select>
+
+
+                    <!-- end .form-body section -->
+                    <div class="panel-footer text-right" style="margin-top: 20px">
+                        <input type="button" value="保存" class="btn btn-info" onclick="choose()">  </input>
+                    </div>
+                    <script th:inline="javascript">
+                        function choose(){
+                            var grade = document.getElementById("grade").value;
+                            var name =document.getElementById("name").value;
+                            var num =document.getElementById("num").value;
+                            var classId = [[${class.classId}]];
+                            var facultyId = $("#faculty").val();
+                            $.ajax({
+                                type: "POST",
+                                url: "/gradeAdmin/class/doEdit",
+                                dataType: "json",
+                                data: {
+                                    "grade": grade,
+                                    "name": name,
+                                    "num": num,
+                                    "facultyId": facultyId,
+                                    "classId":classId
+                                },
+                                success: function (sign) {
+                                    if (sign == 1) {
+                                        alert("修改成功！");
+                                        window.location.href='/gradeAdmin/class/show';
+                                    } else if (sign == 0) {
+                                        alert("修改失败，请重试！");
+                                        location.reload(true);
+                                    }
+                                },
+                                error: function () {
+                                    alert("错误");
+                                }
+
+                            })
+                        }
+                    </script>
+                    <!-- end .form-footer section -->
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+    <!-- end: .admin-form -->
+
+</div>
+</body>

@@ -1,0 +1,175 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>完成作业</title>
+    <link href="css/main.css" rel="stylesheet" type="text/css"/>
+    <link href="css/test.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .hasBeenAnswer {
+            background: #5d9cec;
+            color: #fff;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="main">
+    <!--nr start-->
+    <div class="test_main">
+        <div class="nr_left">
+            <div class="test">
+                <form>
+                    <div class="test_title">
+                        <p class="test_time">
+                            <i class="icon ">&#xe6fb;</i><b class="alt-1" id="time1"
+                                                            th:text="'提交时间'+${submitTime}"></b>
+                        </p>
+                        <font><input type="button" id="submit" value="提交"></font>
+                        <input type="hidden" id="homework_id" th:name="homework_id">
+                    </div>
+
+                    <div class="test_content">
+                        <div class="test_content_title">
+                            <h2>题目</h2>
+                            <p>
+                                <span>共</span><i class="content_lit" id="singleSize"
+                                                 th:text="${HomeWorkQuestionInfos.size()}"></i><span>题</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="test_content_nr">
+                        <ul>
+
+                            <li th:each="question,questionStat:${HomeWorkQuestionInfos}">
+                                <div class="test_content_nr_tt">
+                                    <i th:text="${questionStat.index}+1" th:name="question+${questionStat.index}"></i>
+                                    <div th:text="${question.homeworkQuestionDetail}"></div>
+                                    <div style="display: none;" th:text="${question.homeworkQuestionId}"
+                                         th:id="question+(${questionStat.index}+1)"></div>
+                                    <b
+                                            class="icon ">&#xe881;</b>
+                                </div>
+
+                                <div class="test_content_nr_main">
+                                    <textarea style="width: 100%;height: 100px"
+                                              class="answerArea"
+                                              th:id="answer+(${questionStat.index}+1)"
+                                              th:name="${question.homeworkQuestionId}"
+                                              maxlength="250"></textarea>
+
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+
+
+                </form>
+            </div>
+
+        </div>
+        <div class="nr_right">
+            <div class="nr_rt_main">
+                <div class="rt_nr1">
+                    <div class="rt_nr1_title">
+                        <h1>
+                            <i class="icon ">&#xe692;</i>答题卡
+                        </h1>
+
+                    </div>
+
+                    <div class="rt_content">
+                        <div class="rt_content_tt">
+                            <h2>题号</h2>
+                            <p>
+                                <span>共</span><i class="content_lit" id="num"
+                                                 th:text="${HomeWorkQuestionInfos.size()}"></i><span>题</span>
+                            </p>
+                        </div>
+                        <div class="rt_content_nr answerSheet"
+                        >
+                            <ul>
+
+                                <li th:each="question,questionStat:${HomeWorkQuestionInfos}"><a
+                                        th:href="'#'+@{question+${questionStat.index}}"
+                                        th:text="${questionStat.index}+1"></a></li>
+
+
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--nr end-->
+    <div class="foot"></div>
+</div>
+
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/jquery.easy-pie-chart.js"></script>
+<!--时间js-->
+<script src="js/jquery.countdown.js"></script>
+<script src="js/myJavaScript.js"></script>
+<script>
+    $("#homework_id").val(getCookie("homework_id"));
+    $(".answerArea").change(function () {
+        if ($(this).text() !== "") {
+            var examId = $(this).parent().parent().find($(".test_content_nr_tt")).find($("i")).text();
+            var cardLi = $('a[href=#question' + parseInt(examId - 1) + ']'); // 根据题目ID找到对应答题卡
+            // 设置已答题
+            if (!cardLi.hasClass('hasBeenAnswer')) {
+                cardLi.addClass('hasBeenAnswer');
+            }
+        }
+        if ($(this).text() === "") {
+            var examId1 = $(this).parent().parent().find($(".test_content_nr_tt")).find($("i")).text();
+            var cardLi1 = $('a[href=#question' + parseInt(examId1 - 1) + ']'); // 根据题目ID找到对应答题卡
+            // 设置为答题
+            if (cardLi1.hasClass('hasBeenAnswer')) {
+                cardLi1.removeClass('hasBeenAnswer');
+            }
+        }
+
+    });
+    $(document).ready(function () {
+        $("#submit").click(function () {
+            var data = [];
+            for (var i = 1; i <= parseInt($("#num").text()); i++) {
+                var d = {"id": $("#question" + i).text(), "answer": $("#answer" + i).text()};
+                data.push(d);
+            }
+            console.log(data);
+            $.ajax({
+                type: "post",
+                url: "/submitHomeWork",
+                dataType: "json",
+                timeout: 2000,
+                data: {
+                    "homework_id": getCookie("homework_id"),
+                    "data": JSON.stringify(data)
+                },
+                complete: function (request, result) {
+                    if (request.getResponseHeader("result") == "fail") {
+                        alert("提交失败")
+                    } else if (request.getResponseHeader("result") == "success") {
+                        alert("提交成功")
+                        $(":input").attr("disabled", true);
+                        $(".answerArea").attr("disabled", true);
+                    }
+                }
+
+            })
+        })
+    })
+</script>
+
+</body>
+
+</html>

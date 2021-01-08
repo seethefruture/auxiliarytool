@@ -1,0 +1,472 @@
+﻿<!DOCTYPE HTML>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <title>在线测试</title>
+    <link href="css/main.css" rel="stylesheet" type="text/css"/>
+    <link href="css/test.css" rel="stylesheet" type="text/css"/>
+    <style>
+        .hasBeenAnswer {
+            background: #5d9cec;
+            color: #fff;
+        }
+
+    </style>
+</head>
+
+<body>
+<div class="main">
+    <!--nr start-->
+    <div class="test_main">
+        <div class="nr_left">
+            <div class="test">
+                <form>
+                    <div class="test_title">
+                        <p class="test_time">
+                            <i class="icon ">&#xe6fb;</i><b class="alt-1" id="time1"
+                                                            th:text="${submitTime}"></b>
+                        </p>
+                        <font><input type="button" id="submit" value="交卷"></font>
+                    </div>
+
+                    <div class="test_content">
+                        <div class="test_content_title">
+                            <h2>单选题</h2>
+                            <p>
+                                <span>共</span><i class="content_lit" id="singleSize"
+                                                 th:text="${TestQuestionInfos.single.size()}"></i><span>题</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="test_content_nr" th:if="${TestQuestionInfos.single.size()}">
+                        <ul>
+
+                            <li th:each="singleChoose,singleChooseStat:${TestQuestionInfos.single}"
+                                th:id="single+${singleChooseStat.index}">
+                                <div class="test_content_nr_tt">
+                                    <i th:text="${singleChooseStat.index}+1"></i>
+                                    <div th:text="${singleChoose.testQuestionDetail}"></div>
+                                    <input style="display: none;" th:value="${singleChoose.questionId}"
+                                           th:id="singleId+(${singleChooseStat.index}+1)">
+                                    <input style="display: none;color:green"
+                                           th:id="singleAnswer+(${singleChooseStat.index}+1)"
+                                           th:value="${singleChoose.testQuestionAnswer}">
+                                    <b
+                                            class="icon ">&#xe881;</b>
+                                </div>
+
+                                <div class="test_content_nr_main">
+                                    <ul>
+
+                                        <li class="option">
+
+                                            <input type="radio" class="radioOrCheck"
+                                                   th:id="single+(${singleChooseStat.index}+1)+'a'"
+                                                   th:name="single+(${singleChooseStat.index}+1)"
+                                                   value="A"
+                                            />
+
+
+                                            <label th:for="single+(${singleChooseStat.index}+1)+'a'">
+                                                A.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${singleChoose.testQuestionA}"></p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+
+                                            <input type="radio" class="radioOrCheck"
+                                                   th:name="single+(${singleChooseStat.index}+1)"
+                                                   th:id="single+(${singleChooseStat.index}+1)+'b'"
+                                                   value="B"
+                                            />
+
+
+                                            <label th:for="single+(${singleChooseStat.index}+1)+'b'">
+                                                B.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${singleChoose.testQuestionB}"></p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+
+                                            <input type="radio" class="radioOrCheck"
+                                                   th:name="single+(${singleChooseStat.index}+1)"
+                                                   th:id="single+(${singleChooseStat.index}+1)+'c'"
+                                                   value="C"
+                                            />
+
+
+                                            <label th:for="single+(${singleChooseStat.index}+1)+'c'">
+                                                C.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${singleChoose.testQuestionC}"></p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+
+                                            <input type="radio" class="radioOrCheck"
+                                                   th:name="single+(${singleChooseStat.index}+1)"
+                                                   th:id="single+(${singleChooseStat.index}+1)+'d'"
+                                                   value="D"
+                                            />
+
+
+                                            <label th:for="single+(${singleChooseStat.index}+1)+'d'">
+                                                D.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${singleChoose.testQuestionD}"></p>
+                                            </label>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </li>
+
+                        </ul>
+                    </div>
+
+                    <div class="test_content">
+                        <div class="test_content_title">
+                            <h2>多选题</h2>
+                            <p>
+                                <span>共</span><i class="content_lit" id="multipleSize"
+                                                 th:text="${TestQuestionInfos.multiple.size()}"></i><span>题</span>
+                            </p>
+                        </div>
+                    </div>
+                    <div class="test_content_nr" th:if="${TestQuestionInfos.multiple.size()}">
+                        <ul>
+
+                            <li th:each="multipleChoose,multipleChooseStat:${TestQuestionInfos.multiple}"
+                                th:id="multiple+${multipleChooseStat.index}">
+                                <div class="test_content_nr_tt">
+                                    <i th:text="${multipleChooseStat.index}+1"></i>
+                                    <div th:text="${multipleChoose.testQuestionDetail}"></div>
+                                    <input style="display: none;" th:value="${multipleChoose.questionId}"
+                                           th:id="multipleId+(${multipleChooseStat.index}+1)">
+                                    <input style="display: none;color:green"
+                                           th:id="multipleAnswer+(${multipleChooseStat.index}+1)"
+                                           th:value="${multipleChoose.testQuestionAnswer}">
+                                    <b
+                                            class="icon ">&#xe881;</b>
+                                </div>
+
+                                <div class="test_content_nr_main">
+                                    <ul>
+
+                                        <li class="option">
+
+
+                                            <input type="checkbox" class="radioOrCheck"
+                                                   th:name="multiple+(${multipleChooseStat.index}+1)"
+                                                   th:id="multiple+(${multipleChooseStat.index}+1)+'a'"
+                                                   value="A"
+                                            />
+
+                                            <label th:for="multiple+(${multipleChooseStat.index}+1)+'a'">
+                                                A.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${multipleChoose.testQuestionA}"></p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+
+
+                                            <input type="checkbox" class="radioOrCheck"
+                                                   th:name="multiple+(${multipleChooseStat.index}+1)"
+                                                   th:id="multiple+(${multipleChooseStat.index}+1)+'b'"
+                                                   value="B"
+                                            />
+
+                                            <label th:for="multiple+(${multipleChooseStat.index}+1)+'b'">
+                                                B.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${multipleChoose.testQuestionB}"></p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+
+
+                                            <input type="checkbox" class="radioOrCheck"
+                                                   th:name="multiple+(${multipleChooseStat.index}+1)"
+                                                   th:id="multiple+(${multipleChooseStat.index}+1)+'c'"
+                                                   value="C"
+                                            />
+
+                                            <label th:for="multiple+(${multipleChooseStat.index}+1)+'c'">
+                                                C.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${multipleChoose.testQuestionC}"></p>
+                                            </label>
+                                        </li>
+
+                                        <li class="option">
+
+
+                                            <input type="checkbox" class="radioOrCheck"
+                                                   th:name="multiple+(${multipleChooseStat.index}+1)"
+                                                   th:id="multiple+(${multipleChooseStat.index}+1)+'d'"
+                                                   value="D"
+                                            />
+
+                                            <label th:for="multiple+(${multipleChooseStat.index}+1)+'d'">
+                                                D.
+                                                <p class="ue" style="display: inline;"
+                                                   th:text="${multipleChoose.testQuestionD}"></p>
+                                            </label>
+                                        </li>
+
+                                    </ul>
+                                </div>
+                            </li>
+
+
+                        </ul>
+                    </div>
+
+                </form>
+            </div>
+
+        </div>
+        <div class="nr_right">
+            <div class="nr_rt_main">
+                <div class="rt_nr1">
+                    <div class="rt_nr1_title">
+                        <h1>
+                            <i class="icon ">&#xe692;</i>答题卡
+                        </h1>
+                        <p class="test_time">
+                            <i class="icon ">&#xe6fb;</i><b class="alt-1" id="time2"
+                                                            th:text="${submitTime}"></b>
+                        </p>
+                    </div>
+
+                    <div class="rt_content">
+                        <div class="rt_content_tt">
+                            <h2>单选题</h2>
+                            <p>
+                                <span>共</span><i class="content_lit"
+                                                 th:text="${TestQuestionInfos.single.size()}"></i><span>题</span>
+                            </p>
+                        </div>
+                        <div class="rt_content_nr answerSheet"
+                        >
+                            <ul>
+
+                                <li th:each="singleChoose,singleChooseStat:${TestQuestionInfos.single}"><a
+                                        th:href="'#'+@{single+${singleChooseStat.index}}"
+                                        th:text="${singleChooseStat.index}+1"></a></li>
+
+
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="rt_content">
+                        <div class="rt_content_tt">
+                            <h2>多选题</h2>
+                            <p>
+                                <span>共</span><i class="content_lit" th:text="${TestQuestionInfos.multiple.size()}"></i><span>题</span>
+                            </p>
+                        </div>
+                        <div class="rt_content_nr answerSheet"
+                        >
+                            <ul>
+
+                                <li th:each="multipleChoose,multipleChooseStat:${TestQuestionInfos.multiple}"><a
+                                        th:href="'#'+@{multiple+${multipleChooseStat.index}}"
+                                        th:text="${multipleChooseStat.index}+1"></a></li>
+
+                            </ul>
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <!--nr end-->
+    <div class="foot"></div>
+</div>
+
+<script src="js/jquery-1.11.3.min.js"></script>
+<script src="js/jquery.easy-pie-chart.js"></script>
+<!--时间js-->
+<script src="js/jquery.countdown.js"></script>
+<script src="js/myJavaScript.js"></script>
+<script th:inline="javascript">
+    window.jQuery(function ($) {
+        $('#time1').countDown({
+            css_class: 'countdown-alt-1'
+        }).on('time.elapsed', function () {
+            submit();
+        });
+        $('#time2').countDown({
+            css_class: 'countdown-alt-1'
+        });
+
+    });
+
+    function submit() {
+        var singleSize = $("#singleSize").text();
+        var multipleSize = $("#multipleSize").text();
+        var detail = [];
+        var trueNum = 0;
+        for (var i1 = 1; i1 <= parseInt(singleSize); i1++) {//检查单选题
+            var id = 'singleAnswer' + i1;
+            var trueAnswer = $("#" + id + "").val();
+            switch (trueAnswer) {
+                case 'A':
+                case 'a':
+                    var id1 = 'single' + i1 + 'a';
+                    if ($("#" + id1 + "").is(":checked")) {
+                        trueNum++;
+                        var a1 = {"id": $("#singleId" + i1 + "").val()};
+                        detail.push(a1);
+                    } else {
+                        $("#singleAnswer" + i1 + "").css("color", "red");
+                        var a2 = {"id": $("#singleId" + i1 + "").val(), "false": getFalseChoose(i1)};
+                        detail.push(a2);
+                    }
+                    break;
+                case 'B':
+                case 'b':
+                    var id2 = 'single' + i1 + 'b';
+                    if ($("#" + id2 + "").is(":checked")) {
+                        trueNum++;
+                        var b1 = {"id": $("#singleId" + i1 + "").val()};
+                        detail.push(b1);
+                    } else {
+                        $("#singleAnswer" + i1 + "").css("color", "red");
+                        var b = {"id": $("#singleId" + i1 + "").val(), "false": getFalseChoose(i1)};
+                        detail.push(b);
+                    }
+                    break;
+                case 'C':
+                case 'c':
+                    var id3 = 'single' + i1 + 'c';
+                    if ($("#" + id3 + "").is(":checked")) {
+                        trueNum++;
+                        var c1 = {"id": $("#singleId" + i1 + "").val()};
+                        detail.push(c1);
+
+                    } else {
+                        $("#singleAnswer" + i1 + "").css("color", "red");
+                        var c = {"id": $("#singleId" + i1 + "").val(), "false": getFalseChoose(i1)};
+                        detail.push(c);
+                    }
+                    break;
+                case 'D':
+                case 'd':
+                    var id4 = 'single' + i1 + 'd';
+                    if ($("#" + id4 + "").is(":checked")) {
+                        trueNum++;
+                        var d1 = {"id": $("#singleId" + i1 + "").val()};
+                        detail.push(d1);
+                    } else {
+                        $("#singleAnswer" + i1 + "").css("color", "red");
+                        var d = {"id": $("#singleId" + i1 + "").val(), "false": getFalseChoose(i1)};
+                        detail.push(d);
+                    }
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        for (var i2 = 1; i2 <= parseInt(multipleSize); i2++) {//检查多选题
+            var id5 = 'multipleAnswer' + i2;
+            var trueAnswer1 = $("#" + id5 + "").val();
+            console.log(trueAnswer1);
+            var answer1Array = [];//学生选中的所有选项
+            $('input[name=multiple' + i2 + ']:checked').each(function () {
+                answer1Array.push($(this).val());//向数组中添加元素
+            });
+            var answerStr = answer1Array.join(',');//将数组元素连接起来以构建一个字符串
+            console.log(answerStr);
+            if (trueAnswer1 != answerStr) {
+                $("#multipleAnswer" + i2 + "").css("color", "red");
+                var temp1 = {"id": $("#multipleId" + i2 + "").val(), "false": answerStr};
+                detail.push(temp1);
+            } else {
+                trueNum++;
+                var temp2 = {"id": $("#multipleId" + i2 + "").val()};
+                detail.push(temp2);
+            }
+
+        }
+        var score = parseInt(trueNum/ (parseInt(singleSize) + parseInt(multipleSize)) * 100);
+
+        $('.alt-1').empty();
+        alert("您的成绩为" + score + "分,点击确定查看试卷详情");
+        $(":input").attr("disabled", true);
+        for (var i = 1; i <= singleSize; i++) {
+            $("#singleAnswer" + i + "").css("display", "inline");
+            $("#singleAnswer" + i + "").prop("value", "正确答案：" + $("#singleAnswer" + i + "").val());
+
+        }
+        for (var j = 1; j <= multipleSize; j++) {
+            $("#multipleAnswer" + j + "").css("display", "inline");
+            $("#multipleAnswer" + j + "").prop("value", "正确答案：" + $("#multipleAnswer" + j + "").val());
+
+        }
+        $.ajax({
+            type: "post",
+            url: "/submitTest",
+            dataType: "json",
+            timeout: 2000,
+            data: {
+                "score": score,
+                "test_id": getCookie("test_id"),
+                "detail": JSON.stringify(detail)
+            },
+            complete: function (request, result) {
+                if (request.getResponseHeader("result") == "fail") {
+
+                } else if (request.getResponseHeader("result") == "success") {
+
+                }
+            },
+            success: function (result) {
+
+            }
+        })
+
+    }
+
+    function getFalseChoose(index) {
+        var falseId = 'single' + index;
+        return $("input[name=" + falseId + "]:checked").val();
+    }
+
+    $(function () {
+        $("#submit").click(function () {
+            //  计算成绩
+            submit();
+        });
+
+        $('li.option label').click(function () {
+            var examId = $(this).closest('.test_content_nr_main').closest('li').attr('id'); // 得到题目ID
+            var cardLi = $('a[href=#' + examId + ']'); // 根据题目ID找到对应答题卡
+            // 设置已答题
+            if (!cardLi.hasClass('hasBeenAnswer')) {
+                cardLi.addClass('hasBeenAnswer');
+            }
+
+        });
+    });
+</script>
+
+
+</body>
+
+</html>

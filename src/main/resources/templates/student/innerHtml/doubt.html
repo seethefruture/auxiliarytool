@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="utf-8">
+    <meta name="author" content="http://www.webkfa.com/"/>
+    <title>Doubt</title>
+    <style type="text/css">
+        * {
+            margin: 0;
+            padding: 0;
+            -webkit-touch-callout: none; /* prevent callout to copy image, etc when tap to hold */
+            -webkit-text-size-adjust: none; /* prevent webkit from resizing text to fit */
+            -webkit-tap-highlight-color: rgba(210, 210, 210, 0.35); /* make transparent link selection, adjust last value opacity 0 to 1.0 */
+            -webkit-user-select: none; /* prevent copy paste, to allow, change 'none' to 'text' */
+        }
+
+        body {
+            font-family: "微软雅黑";
+            font-size: 12px;
+        }
+
+        ul, li {
+            list-style: none;
+        }
+
+        .ylcon {
+            width: 100%;
+            min-width: 320px;
+        }
+
+        .tit {
+            height: 26px;
+            line-height: 26px;
+            padding: 0px 15px;
+            position: relative;
+            font-size: 15px;
+            color: #aaa;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+        }
+
+        .story {
+            border-bottom: 1px dashed #cecece;
+            padding: 0 15px 3px;
+            position: relative;
+        }
+
+        .story_t {
+            font-size: 1.2em;
+            color: rgba(0, 0, 0, 1);
+            padding-top: 5px;
+            padding-bottom: 2px;
+        }
+
+        .story_m {
+            color: rgba(110, 110, 110, 1);
+            line-height: 21px;
+            word-break: break-all;
+            word-wrap: break-word;
+            overflow: hidden;
+            font-size: 1.2em;
+            padding: 2px 0;
+        }
+
+        .story_time {
+            color: rgba(154, 154, 154, 1);
+            padding: 2px 0;
+        }
+
+        .story_hf {
+            background: rgb(245, 245, 245);
+            font-size: 1.2em;
+            border: 1px solid rgba(204, 204, 204, 0.2);
+            border-radius: 2px;
+            color: rgba(110, 110, 110, 1);
+            padding: 4px;
+            margin-bottom: 5px;
+        }
+
+        .opbtn {
+            position: absolute;
+            top: 0;
+            right: 0;
+        }
+    </style>
+    <link rel="stylesheet" href="css/common.css"/>
+    <script src="/js/jquery-2.2.4.js"></script>
+    <script src="/js/myJavaScript.js"></script>
+    <script>
+        function chooseTeacher() {
+            let showDialog = $(".showDialog");
+            let selected = $("#course option:selected");
+            let selectedTeacher = selected.val();
+            if (selectedTeacher === "请选择") {
+                showDialog.hide();
+                return;
+            }
+            selectedTeacher = selectedTeacher.substring(1, selectedTeacher.length - 1).split(",");
+            let available = $("#teacher");
+            available.empty();
+            available.prepend("<option>请选择</option>");
+            for (let i = 0; i < selectedTeacher.length; i++) {
+                available.append("<option>" + selectedTeacher[i] + "</option>");
+            }
+
+            showDialog.hide();
+        }
+
+        function viewInfo() {
+            let selectedCourse = $("#course option:selected").text();
+            let selectedTeacher = $("#teacher option:selected").text();
+            if (selectedTeacher === "请选择") {
+                $(".showDialog").hide();
+                return;
+            }
+            $("#course_name").val(selectedCourse);
+            $("#teacher_name").val(selectedTeacher);
+            $.ajax({
+                type: "POST",
+                url: "/getDoubtAJAX",
+                dataType: "json",
+                data: {
+                    courseName: selectedCourse,
+                    teacherName: selectedTeacher
+                },
+                complete: function (request, text) {
+                    console.log(request.getResponseHeader("result"));
+                    if (request.getResponseHeader("result") === "warn") {
+                        alert("部分资源加载时可能出现问题,请返回重试");
+                    } else if (request.getResponseHeader("result") === "success") {
+                    }
+                },
+                success: function (result) {
+                    console.log(result);
+                    let content = $("#messDivId");
+                    content.empty();
+                    content.append('<div class="tit">' + selectedTeacher + "老师教授的" + selectedCourse + "的课程问答信息" + '</div>');
+                    $.each(result, function (index, value) {
+                        console.log(value);
+                        //这是一条数据
+                        content.append('<div class="story">' +
+                            '            <div class="opbtn"></div>' +
+                            '            <p class="story_t">' + value["student_name"] + '</p>' +
+                            '            <p class="story_time">' + value["doubt_time"] + '</p>' +
+                            '            <p class="story_m">' + value["doubt_question"] + '</p>'
+                        );
+                        if (value["doubt_question_path"]) {
+                            content.append('<img src="' + value["doubt_question_path"] + '" alt="图片丢失"/>');
+                        }
+                        if (value["doubt_answer"]) {
+                            content.append('            <p class="story_hf">@' + value["teacher_name"] + ':' + value["doubt_answer"] + '</p>');
+                        } else {
+                            content.append('            <p class="story_hf">还没有人回答</p>');
+                        }
+                        if (value["doubt_answer_path"]) {
+                            content.append('<img src="' + value["doubt_answer_path"] + '" />');
+                        }
+                        content.append('</div>');
+                    });
+                    $(".showDialog").show();
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            $(".showDialog").hide();
+            console.log($(window).height());
+        })
+    </script>
+    <script type="text/javascript">
+        let w, h, className;
+
+        function getSrceenWH() {
+            w = $(window).width();
+            h = $(window).height();
+            $('#dialogBg').width(w).height(h);
+        }
+
+        window.onresize = function () {
+            getSrceenWH();
+        };
+        $(window).resize();
+
+        $(function () {
+            getSrceenWH();
+
+            //显示弹框
+            $('.showDialog a').click(function () {
+                console.log("click");
+                className = $(this).attr('class');
+                $('#dialogBg').fadeIn(300);
+                $('#dialog').removeAttr('class').addClass('animated ' + className + '').fadeIn();
+            });
+
+            //关闭弹窗
+            $('.claseDialogBtn').click(function () {
+                $('#dialogBg').fadeOut(300, function () {
+                    $('#dialog').addClass('bounceOutUp').fadeOut();
+                });
+            });
+        });
+
+        function checkFormat() {
+            let fileName = $("#question_img").val();
+            let suffix = fileName.substr(fileName.lastIndexOf(".") + 1);
+            if (suffix === "png" || suffix === "jpg" || suffix === "jpeg") {
+                $("#questionForm").submit();
+                let courseName = $("#course_name").val();
+                let teacherName = $("#teacher_name").val();
+                let doubt_question = $("#doubt_question").val();
+                let files = $("#question_img").prop('file');
+
+            } else {
+                alert("暂时不支持该格式的文件");
+            }
+        }
+    </script>
+</head>
+<body>
+<div class="ylcon">
+    <div>
+        选择要查看的课程
+        <select id="course" onchange="chooseTeacher()" class="form-control" style="width: 30%">
+            <option value="请选择">请选择</option>
+            <option th:each="resourceInfo:${resourceInfos}" th:value="${resourceInfo.teacherName}"
+                    th:text="${resourceInfo.courseName}"></option>
+        </select>
+        <div style="display: none" th:text="${resourceInfos}" id="resourceInfos"></div>
+
+        <select id="teacher" onchange="viewInfo()" class="form-control" style="width: 30%">
+            <option value="请选择">请选择</option>
+            <option th:each="course:${courseList}" th:value="${course}" th:text="${course}"></option>
+        </select>
+    </div>
+    <div class="panel-body" style="height: 400px; overflow-y:scroll">
+        <div style="border: 1px  #000000; width: 90%; margin: 0 auto;">
+            <span>
+                <div id="messDivId">
+    </div>
+            </span>
+        </div>
+    </div>
+
+    <div class="showDialog">
+        <a href="javascript:" class="bounceInDown">提问</a>
+    </div>
+    <div id="dialogBg"></div>
+    <div id="dialog" class="animated">
+        <img class="dialogIco" width="50" height="50" src="img/ico.png" alt=""/>
+        <div class="dialogTop">
+            <a href="javascript:" class="claseDialogBtn">关闭</a>
+        </div>
+        <form action="/insertDoubt" method="post" id="questionForm" enctype="multipart/form-data">
+            <ul class="editInfos">
+                <li><label><font color="#ff0000">* </font>问题：<textarea name="doubt_question" required cols="30"
+                                                                       maxlength="100"
+                                                                       class="ipt"
+                                                                       id="doubt_question"></textarea></label>
+                </li>
+                <li><label>附加图片：<input type="file" id="question_img" name="questionImg" value="" class="ipt"/></label>
+                </li>
+                <li style="visibility: hidden"><label>课程名：<input type="text" id="course_name" name="courseName"
+                                                                 value=""/></label>
+                </li>
+                <li style="visibility: hidden"><label>教师名：<input type="text" id="teacher_name" name="teacherName"
+                                                                 value=""/></label>
+                </li>
+                <li><input type="submit" value="确认提交" class="submitBtn" onclick="checkFormat()"/></li>
+            </ul>
+        </form>
+    </div>
+</div>
+</body>
+</html>

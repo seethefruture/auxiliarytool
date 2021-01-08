@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+    <script th:inline="javascript">
+        $(".button").click(function(){
+            var id = $(this).attr("name");
+            $.ajax({
+                type: "POST",
+                url: "/teacher/resource/delete",
+                dataType: "json",
+                data: {
+                    "id": id
+                },
+                success: function (sign) {
+                    if(sign==1){
+                        alert("删除成功！");
+                    }
+                    else if(sign==0){
+                        alert("删除失败");
+                    }
+                    location.reload(true);
+                },
+                error:function () {
+                    alert("错误");
+                }
+
+            })
+        })
+
+        $(
+
+            $(document).ready(
+
+               function () {
+                   //var resourceLen = parseInt($("#resourceLen").text());
+                   var resourceLen = [[${resource.size()}]];
+                   for(var i=0;i<resourceLen;i++){
+                       var path = $("#"+i).text();
+                       var length = path.lastIndexOf('/')+1;
+                       var resourceName = path.substring(length,path.length);
+                       $("#"+i).html(resourceName);
+                       console.log(resourceName);
+                   }
+                   $("#resourcePathId")
+               }
+
+            )
+        )
+    </script>
+    <div class="panel  heading-border">
+
+        <!-- message toolbar header -->
+        <div class="panel-menu">
+            <div class="row">
+
+                <div class="hidden-xs hidden-sm col-md-3">
+                    <div class="btn-group" style="display: block">
+                        <button type="button" class="btn btn-default light" id="refreshInfo">
+                            刷新
+                        </button>
+                        <script>
+                            $("#refreshInfo").click(function () {
+                                location.reload(true);
+                            })
+                        </script>
+                        <button type="button" class="btn btn-default light" id="insert" onclick="window.location.href=window.location.href='/teacher/resource/insert'">
+                            添加资源
+                        </button>
+                        <!--<button type="button" class="btn btn-default light" id="editChapter" onclick="window.location.href=window.location.href='/teacher/resource/insert'">-->
+                            <!--编辑章节名称-->
+                        <!--</button>-->
+                        <a id="btn0"></a>
+                    </div>
+                    <div id="tableInfo"></div>
+                </div>
+            </div>
+
+        </div>
+        <!-- message listings table -->
+        <div class="panel-body pn">
+
+
+
+
+            <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+                <thead>
+                <tr>
+                    <th class="hidden-xs" style="text-align: center">序号</th>
+                    <!--<th class="hidden-xs" style="text-align: center">课程名</th>-->
+                    <th class="hidden-xs" style="text-align: center">章节</th>
+                    <th class="hidden-xs" style="text-align: center">资源</th>
+                    <th class="hidden-xs" style="text-align: center">操作</th>
+                </tr>
+                </thead>
+                <tbody class="course_info_ajax">
+                <!--<div th:id="resourceLen" th:text="${resource.length}"></div>-->
+                <tr class="message-unread" th:each="res:${resource}" >
+                    <td class="hidden-xs" style="text-align: center" th:text="${resStat.index}+1" ></td>
+                    <!--<td  th:text="${res.course_name}" style="text-align: center" ></td>-->
+                    <td  th:text="'第'+${res.chapter_num}+'单元'+${res.chapter_name}" style="text-align: center" ></td>
+                    <!--<td  th:text="${res.resource_chapter}==0?'课程简介':'第'+${res.resource_chapter}+'单元'"-->
+                        <!--style="text-align: center" ></td>-->
+                    <!--<script th:inline="javascript">-->
+                        <!--var path = [[${res.resource_path}]];-->
+                        <!--var length = path.lastIndexOf('/')+1;-->
+                        <!--var resourceName = path.substring(length,path.length);-->
+                        <!--var id=[[${res.resource_id}]];-->
+                        <!--$(document).ready(function () {-->
+                            <!--document.getElementById(id).value=resourceName;-->
+                            <!--console.log(resourceName);-->
+                            <!--console.log(path);-->
+                        <!--})-->
+                    <!--</script>-->
+                    <td  th:text="${res.resource_path}" th:id="${resStat.index}"></td>
+                    <!--<td th:inline="text" th:id="${res.resource_id}"><script>resourceName</script></td>-->
+                    <td  style="text-align: center">
+                        <a th:if="${res.resource_sign==0}" th:text="未发布，点击发布" href="" style="color:#FF9933"></a>
+                        <text th:if="${res.resource_sign==1}" th:text="已发布" ></text>
+                        <input type="button" value="点击下载" th:name="${res.resource_id}" class="upload">
+                        <input type="button" value="删除" th:name="${res.resource_id}" class="button">
+                    </td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+
+</html>
+

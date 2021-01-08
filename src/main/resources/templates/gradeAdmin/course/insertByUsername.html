@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <!-- Admin Forms CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/admin-tools/admin-forms/css/admin-forms.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+</head>
+<body>
+<div class="tray tray-center">
+
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 添加课程信息</h2>
+        <p class="lead"></p>
+    </div>
+
+    <!-- Validation Example -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel heading-border">
+
+            <form method="post" action="list.html" id="admin-form">
+
+                <div class="panel-body bg-light">
+
+                    <div class="section-divider mt20 mb40">
+                        <span> 基本信息 </span>
+                    </div>
+                    <!-- .section-divider -->
+
+
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <textarea class="gui-textarea" id="courseName" name="courseName" placeholder="课程名"></textarea>
+                            <label  class="field-icon">
+                                <i class="fa fa-comments">
+                                </i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <textarea class="gui-textarea" id="teacherName" name="teacherName" placeholder="教师用户名"></textarea>
+                            <label  class="field-icon">
+                                <i class="fa fa-comments">
+                                </i>
+                            </label>
+                        </label>
+                    </div>
+                    <!-- end section -->
+
+                    <!-- end .form-body section -->
+                    <div class="panel-footer text-right">
+                        <input type="button" value="保存" class="btn btn-info" >  </input>
+                    </div>
+                    <script>
+                        $("input:button").click(function(){
+                            var courseName = document.getElementById("courseName").value;
+                            var teacherName = document.getElementById("teacherName").value;
+                            if(courseName==""&&teacherName==""){
+                                alert("你还有尚未填写的项！");
+                            }
+                            else {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/gradeAdmin/course/doInsertByUsername",
+                                    dataType: "json",
+                                    data: {
+                                        "courseName": courseName,
+                                        "teacherUsername": teacherName,
+                                    },
+                                    success: function (sign) {
+                                        if (sign == 1) {
+                                            alert("没有该老师，请确认后重输！");
+                                            location.reload(true);
+                                        } else if (sign == 2) {
+                                            alert("有重名课程，请勿重复插入！");
+                                        }else if (sign == 3) {
+                                            alert("插入成功！");
+                                            window.location.href='/gradeAdmin/course/show';
+                                        }else if (sign == 5) {
+                                            alert("未知错误！");
+                                            location.reload(true);
+                                        }
+                                    },
+                                    error: function () {
+                                        alert("错误");
+                                    }
+
+                                })
+                            }
+
+                        });
+                    </script>
+                    <!-- end .form-footer section -->
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+    <!-- end: .admin-form -->
+
+</div>
+</body>

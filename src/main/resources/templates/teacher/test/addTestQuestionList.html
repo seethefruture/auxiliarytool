@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+
+<table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+    <thead>
+    <tr>
+        <th class="hidden-xs" style="text-align: center">选择</th>
+        <th class="hidden-xs" style="text-align: center">题目</th>
+    </tr>
+    </thead>
+    <tbody class="course_info_ajax">
+    <tr class="message-unread" th:each="question:${question.list}">
+        <td>
+            <input type="checkbox" th:value="${question.questionId}" name="question" th:id="${question.questionId}">
+        </td>
+        <td  th:text="${question.testQuestionDetail}" style="text-align: center"></td>
+    </tr>
+
+    </tbody>
+</table>
+
+</html>
+

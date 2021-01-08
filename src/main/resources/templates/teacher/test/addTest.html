@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <script src="/js/myJavaScript.js"></script>
+    <script>
+
+        $(document).ready(function () {
+            $("#chapter").hide();
+            $('.section').click(function(){
+                var courses = document.getElementsByName("testBank");
+                for(var j=0;j<courses.length;j++){
+                    if(courses[j].checked){
+                        var courseId = courses[j].value;
+                        setCookie("testCourseId",courseId,1);
+                    }
+                }
+                $.ajax({
+                    type: 'POST',
+                    async: false,
+                    dataType: "json",
+                    url: '/resourceChapterShow',
+                    timeout: 2000,
+                    data: {
+                        courseId:courseId
+                    },
+                    error: function () {
+                        alert("局部刷新错误，点击确定刷新整个页面");
+                    },
+                    success: function (result) {
+
+                        $.each(result, function (index, value) {
+                            $("#chapter").append(
+                                '                        <option value="' + value["chapter_num"] + '">第' + value["chapter_num"] + '单元'+value["chapter_name"]+'</option>'
+                            )
+
+                        });
+                        $("#chapter").show();
+                    }
+                })
+            })
+        })
+        //选择题库和章节
+        function change() {
+            var testBank = document.getElementsByName("testBank");
+            //var chapters = document.getElementsByName("chapter");
+            var chapter = $('select option:selected').val();
+            if(courseId==0){
+                alert("请先选择课程");
+            }
+            var courseId = getCookie("testCourseId");
+            window.location.href='/teacher/test/addTestQuestion?courseId='+courseId+'&chapter='+chapter;
+        }
+
+    </script>
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 添加测试</h2>
+    </div>
+    <label class="section">
+    选择题库：<input th:each="course:${course}" th:text="${course.course_name}" type="radio" th:value="${course.course_id}" name="testBank">
+    </label>
+    <br/>
+    <!--<label class="">-->
+    <!--选择章节：<input th:each="i : ${#numbers.sequence(1,10)}" th:value="${i}"  th:text="${i}" type="radio" name="chapter">-->
+    <!--</label>-->
+    <select id="chapter" onchange="change()" class="form-control" style="width: 30%">
+
+    </select>
+    <br/>
+    <!--<input type="button" value="点击查看" onclick="choose()" class="btn btn-info">-->
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;" id="list">
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<!-- end: .tray-center -->
+</body>
+</html>

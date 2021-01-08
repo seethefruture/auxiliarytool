@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <script src="/js/pageJS.js"></script>
+    <script src="/js/myJavaScript.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/page.css">
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2>选择题目</h2>
+    </div>
+    <select class="form-control" id="chapter" style="width: 100px;margin-left: 32px">
+        <option value="请选择">请选择章节</option>
+        <option th:each="chapter:${chapter}" th:value="${chapter.chapter_id}"  th:text="'第'+${chapter.chapter_num}+'单元'+${chapter.chapter_name}"></option>
+    </select>
+    <script>
+        var question = []; //创建数组用于保存题目的id
+        var currentPage = 1;
+        $(document).ready($(function () {
+            $("#chapter").on('change', function () {
+                var chapter = $("#chapter").val();
+                if (chapter != 0) {
+                    setCookie("chapter", chapter, 1);
+                    list(chapter, currentPage);
+                }
+                $("#middleBody").show();
+            })
+        }));
+    </script>
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+    <!-- message listings table -->
+        <div class="panel  heading-border" style="margin-top: 20px" id="middleBody">
+            <div class="panel-body pn">
+
+        <div id="list">
+
+        </div>
+        <div style="text-align: center;margin:30px auto;" id="page">
+            <div id="pager" class="pager clearfix">
+            </div>
+        </div>
+        <div class="panel-footer text-right">
+            <input type="button" value="保存" class="btn btn-info" id="save">  </input>
+        </div>
+
+    </div>
+
+    <script src="/js/jquery.z-pager.js" type="text/javascript" charset="utf-8"></script>
+    <script type="text/javascript">
+        $("#pager").zPager({
+            totalData: 50,
+            htmlBox: $('#wraper'),
+            btnShow: true,
+            ajaxSetData: false,
+            dataRender: function(data) {
+                console.log(data + '---data-2');
+                alert(data);
+            },
+        });
+    </script>
+</div>
+        <script>
+            function list(chapter,currentPage) {
+                $.ajax({
+                    type: "POST",
+                    url: "/teacher/homework/addHomeworkQuestionList",
+                    data:
+                        {
+                            "pageNum": currentPage,
+                            "chapter":chapter
+                        },
+                    success: function (html) {
+
+                        $("#list").html(html);
+                        $("a.pg-next").on("click", function () {
+                            var chapter = getCookie("chapter");
+                            currentPage++;
+                            findCheckedQuestion();
+                            list(chapter,currentPage);
+
+                        });
+
+                        $("a.pg-prev").on("click", function () {
+                            var chapter = getCookie("chapter");
+                            currentPage--;
+                            //var current = parseInt(currentPage);
+                            if (currentPage < 1) {
+                                alert("已经是第一页！");
+                                currentPage = 1;
+                            }
+                            findCheckedQuestion();
+                            list(chapter,currentPage);
+
+                        })
+
+                        $("a.pg-first").on("click", function () {
+                            var chapter = getCookie("chapter");
+                            findCheckedQuestion();
+                            list(chapter,1);
+
+                        })
+                        showHistoryChoice();
+                    },
+                    error: function () {
+                        $("#list").html("加载失败，请刷新重试！");
+                    }
+                });
+            }
+
+            //用于保存questionId
+            function saveQuestionId(questionId){
+                //没有找到该questionId
+                if(question.indexOf(questionId)==-1){
+                    question.push(questionId);
+                }
+            }
+            var questionList = document.getElementsByName("question");
+            function findCheckedQuestion(){
+                for(var i=0;i<questionList.length;i++){
+                    if(questionList[i].checked){
+                        saveQuestionId(questionList[i].value);
+                    }
+                }
+            }
+
+            //用来在翻前页或后页时，还保留着原有的选择
+            function showHistoryChoice(){
+                for(var i=0;i<questionList.length;i++){
+                    //说明存在该id
+                    var questionId = questionList[i].value;
+                    if(question.indexOf(questionId)!=-1){
+                        console.log($("#"+questionId).text()+'a');
+                        $("#"+questionId).prop("checked", true);
+                    }
+                }
+            }
+
+            //下一页
+            $(document).ready($(function () {
+                $("#middleBody").hide();
+                $("a.pg-next").on("click", function () {
+                    var chapter = getCookie("chapter");
+                    currentPage++;
+                    findCheckedQuestion();
+                    list(chapter,currentPage);
+                });
+
+                $("a.pg-prev").on("click", function () {
+                    var chapter = getCookie("chapter");
+                    currentPage--;
+                    //var current = parseInt(currentPage);
+                    if (currentPage < 1) {
+                        alert("已经是第一页！");
+                        currentPage = 1;
+                    }
+                    findCheckedQuestion();
+                    list(chapter,currentPage);
+                })
+
+                $("a.pg-first").on("click", function () {
+                    var chapter = getCookie("chapter");
+                    findCheckedQuestion();
+                    list(chapter,1);
+                })
+            }));
+
+
+            //保存
+            $("#save").click(function() {
+                findCheckedQuestion();
+                var questionLength = question.length;
+                if(questionLength==0){
+                    alert("你还未选择题目！");
+                }
+                var mymessage=confirm("你一共选择了"+questionLength+"个题目，你确定吗");
+                if(mymessage==true) {
+                    $.ajax({
+                        type: "POST",
+                        url: "/teacher/homework/insert",
+                        traditional: true,
+                        dataType: "json",
+                        data: {
+                            "question":question,
+                        },
+                        success: function (sign) {
+                            if(sign==1){
+                                alert("添加成功！");
+                                window.location.href='/teacher/homework/homeworkBank';
+                            }
+                            else{
+                                alert("添加失败，请重试！");
+                                location.reload(true);
+                            }
+
+                        },
+                        error:function () {
+                            alert("错误");
+                        }
+
+                    })
+                }
+            })
+        </script>
+
+
+
+    </div>
+
+    </div>
+</div>
+</div>
+</body>
+</html>
+

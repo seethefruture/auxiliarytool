@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" href="assets/skin/default_skin/css/auth.css">
+    <meta charset="UTF-8">
+    <title>register</title>
+    <script src="js/jquery-2.2.4.js"></script>
+    <script src="js/myJavaScript.js"></script>
+
+    <script>
+        $(document).ready(function () {
+            $("#register_button").click(function () {
+                var username = $("#user").val();
+                var password = $("#password").val();
+                var no = $("#no").val();
+                var name = $("#name").val();
+                var myClass = $("#classes").val();
+
+                $.ajax({
+                    type: "post",
+                    url: "/register/student",
+                    dataType: "json",
+                    contentType: "application/x-www-form-urlencoded",
+                    data: {
+                        username: username,
+                        password: password,
+                        no: no,
+                        name: name,
+                        myClass: myClass
+
+                    },
+                    complete: function (request) {
+                        if (request.getResponseHeader("result") == "occupied") {
+                            alert("用户名已存在，换一个试试吧");
+                            $("#user").innerText = "";
+                        } else if (request.getResponseHeader("result") == "success") {
+                            alert("注册成功，正在跳转登陆");
+                            post("/mainInterface", {"username": username});
+                        } else {
+                        }
+                    }
+                })
+            });
+        });
+    </script>
+</head>
+<body>
+<div class="lowin">
+    <div class="lowin-brand">
+        <img src="assets/img/kodinger.jpg" alt="logo">
+    </div>
+    <div class="lowin-wrapper">
+        <div class="lowin-box lowin-register">
+            <div class="lowin-box-inner">
+                <form>
+                    <p>Let's create your account</p>
+                    <div class="lowin-group">
+                        <label>输入要注册的账户</label>
+                        <input type="text" name="username" id="user" autocomplete="off" class="lowin-input">
+                    </div>
+                    <div class="lowin-group">
+                        <label>输入要注册的密码</label>
+                        <input type="password" autocomplete="off" id="password" name="password" class="lowin-input">
+                    </div>
+                    <div class="lowin-group">
+                        <label>输入您的学号</label>
+                        <input type="text" name="no" autocomplete="off" id="no" class="lowin-input">
+                    </div>
+                    <div class="lowin-group">
+                        <label>输入您的名字</label>
+                        <input type="text" name="name" autocomplete="off" id="name" class="lowin-input">
+                    </div>
+                    <div class="com-sel">
+                        <select name="class" id="classes" class="com-opt">
+                            <option class="lowin-group"
+                                    th:value=${entries.classId}
+                                    th:text="${entries.classGrade}+${entries.className}+${entries.classNumber}+班"
+                                    th:each="entries,stat:${allClasses}"></option>
+                        </select>
+                    </div>
+                </form>
+                <button id="register_button" class="lowin-btn">注册</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+</body>
+</html>

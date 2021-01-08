@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<div class="panel  heading-border">
+
+    <!-- message toolbar header -->
+    <div class="panel-menu">
+        <div class="row">
+
+            <div class="hidden-xs hidden-sm col-md-3">
+                <div class="btn-group" style="display: block">
+                    <button type="button" class="btn btn-default light" id="refreshInfo">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                    <!--<button type="button" class="btn btn-default light" id="insert" onclick="window.location.href='/teacher/resource/insert'">-->
+                        <!--<i class="glyphicon glyphicon-plus"></i>-->
+                    <!--</button>-->
+                    <a id="btn0"></a>
+                </div>
+                <div id="tableInfo"></div>
+            </div>
+        </div>
+
+    </div>
+    <!-- message listings table -->
+    <div class="panel-body pn">
+
+
+        <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+            <thead>
+            <tr>
+                <th class="hidden-xs" style="text-align: center">序号</th>
+                <th class="hidden-xs" style="text-align: center">教师名</th>
+                <th class="hidden-xs" style="text-align: center">课程名</th>
+                <th class="hidden-xs" style="text-align: center">章节</th>
+                <th class="hidden-xs" style="text-align: center">资源</th>
+            </tr>
+            </thead>
+            <tbody class="course_info_ajax">
+            <tr class="message-unread" th:each="res:${resource}">
+                <td class="hidden-xs" style="text-align: center" th:text="${resStat.index}+1"></td>
+                <td  th:text="${res.teacher_name}" style="text-align: center"></td>
+                <td  th:text="${res.course_name}"
+                     style="text-align: center"></td>
+                <td  th:text="${res.resource_chapter}=='0'?'课程简介':'第'+${res.resource_chapter}+'单元'" style="text-align: center"></td>
+                <td  th:text="${res.resource_path}" style="cursor:pointer;text-align: center;color:dodgerblue;text-decoration: underline"></td>
+
+            </tr>
+
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+</html>
+

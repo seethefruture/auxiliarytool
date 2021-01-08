@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+
+<table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+    <thead>
+    <tr>
+        <th class="hidden-xs" style="text-align: center">序号</th>
+        <th class="hidden-xs" style="text-align: center">学号</th>
+        <th class="hidden-xs" style="text-align: center">姓名</th>
+        <th class="hidden-xs" style="text-align: center">是否批改</th>
+    </tr>
+    </thead>
+    <tbody class="course_info_ajax">
+    <tr class="message-unread" th:each="list:${list.list}">
+        <td class="hidden-xs" style="text-align: center" th:text="${listStat.index}+1"></td>
+        <td  th:text="${list.student_no}" style="text-align: center"></td>
+        <td  th:text="${list.student_name}" style="text-align: center"></td>
+        <td th:if="${list.submit_time!=null}" style="text-align: center">
+            <a  id="correct"  th:href="@{/teacher/homework/doCorrectHomework(studentId=${list.student_id},score=${list.score},homeworkId=${list.homework_id})}"
+                th:text="${list.score}==''?'点击批改':'已批改，查看结果'" th:style="${list.score}==''?'color:red':'color:blue'"
+            ></a>
+        </td>
+        <td th:if="${list.submit_time==null}" style="text-align: center">
+            <a th:text="未提交"></a>
+        </td>
+    </tr>
+
+    </tbody>
+</table>
+
+</html>
+

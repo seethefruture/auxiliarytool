@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<div class="panel  heading-border">
+
+    <!-- message toolbar header -->
+    <div class="panel-menu">
+        <div class="row">
+
+            <div class="hidden-xs hidden-sm col-md-3">
+                <div class="btn-group" style="display: block">
+                    <button type="button" class="btn btn-default light" id="refreshInfo">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                    <a id="btn0"></a>
+                </div>
+                <div id="tableInfo"></div>
+            </div>
+        </div>
+
+    </div>
+    <!-- message listings table -->
+    <div class="panel-body pn">
+
+
+        <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+            <thead>
+            <tr>
+                <th class="hidden-xs" style="text-align: center"></th>
+                <th class="hidden-xs" style="text-align: center">课程名</th>
+                <th class="hidden-xs" style="text-align: center">教师名</th>
+            </tr>
+            </thead>
+            <tbody class="course_info_ajax">
+            <tr class="message-unread" th:each="courseList:${courseList}">
+                <td><input type="radio" th:value="${courseList.course_id}" name="course"></td>
+                <td  th:text="${courseList.course_name}" style="text-align: center"></td>
+                <td  th:text="${courseList.teacher_name}" style="text-align: center"></td>
+            </tr>
+
+
+            </tbody>
+        </table>
+        <div class="panel-footer text-right">
+            <input type="button" value="下一项" class="btn btn-info" onclick="next()">  </input>
+        </div>
+        <script>
+            function next() {
+                var courseList = document.getElementsByName("course");
+                var teacherId=0;
+                var num = 0;
+                var courseId = 0;
+                for(var i=0;i<courseList.length;i++){
+                    if(courseList[i].checked){
+                        courseId = courseList[i].value;
+                    }
+                }
+                if(courseId==0){
+                    alert("未选择！请重选");
+                }
+                else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/gradeAdmin/teach/saveChoice",
+                        dataType: "json",
+                        data: {
+                            "courseId": courseId
+                        },
+                        success: function (sign) {
+                            if (sign == 1) {
+                                window.location.href="/gradeAdmin/teach/insert2";
+                            }
+                        },
+                        error: function () {
+                            alert("错误");
+                        }
+
+                    })
+                }
+
+            }
+        </script>
+    </div>
+
+</div>
+
+</html>
+

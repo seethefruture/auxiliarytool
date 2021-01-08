@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <!-- Admin Forms CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/admin-tools/admin-forms/css/admin-forms.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+</head>
+<body>
+<div class="tray tray-center">
+
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 编辑任课信息</h2>
+        <p class="lead"></p>
+    </div>
+
+    <!-- Validation Example -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel heading-border">
+
+
+                <div class="panel-body bg-light">
+
+                    <div class="section-divider mt20 mb40">
+                        <span> 基本信息 </span>
+                    </div>
+                    <!-- .section-divider -->
+
+
+                    <script th:inline="javascript">
+                        $(document).ready(function (){
+                            document.getElementById("courseName").value=[[${teach.course_name}]];
+                            document.getElementById("teacherName").value=[[${teach.teacher_name}]];
+                            document.getElementById("teachTime").value=[[${teach.teach_time}]];
+                            document.getElementById("className").value=[[${teach.class_name}]];
+                            document.getElementById("classGrade").value=[[${teach.class_grade}]];
+                            document.getElementById("classNumber").value=[[${teach.class_number}]];
+                        });
+
+                    </script>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            课程名:<input type="text" id="courseName">
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            教师名:<input type="text" id="teacherName">
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            班级名:<input type="text" id="classGrade"><input type="text" id="className"><input type="text" id="classNumber">
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            学期:<input type="text" id="teachTime">
+                        </label>
+                    </div>
+
+
+
+                    <!-- end section -->
+
+                    <!-- end .form-body section -->
+                    <div class="panel-footer text-right">
+                        <input type="button" value="保存" class="btn btn-info" id="edit">  </input>
+                    </div>
+                    <script th:inline="javascript">
+                        $("#edit").click(function () {
+                            var courseName = document.getElementById("courseName").value;
+                            var teacherName = document.getElementById("teacherName").value;
+                            var className = document.getElementById("className").value;
+                            var classGrade = document.getElementById("classGrade").value;
+                            var classNumber = document.getElementById("classNumber").value;
+                            var teachTime = document.getElementById("teachTime").value;
+                            var teachId = [[${teach.teach_id}]];
+                            if(courseName==""||teacherName==""||className==""||teachTime==""||classGrade==""||classNumber==""){
+                                alert("有未输入的选项，请重新输入！");
+                                location.reload(true);
+                            }
+                            else {
+                                $.ajax({
+                                    type: "POST",
+                                    url: "/gradeAdmin/teach/doEdit",
+                                    dataType: "json",
+                                    data: {
+                                        "courseName": courseName,
+                                        "teacherName": teacherName,
+                                        "className": className,
+                                        "teachTime": teachTime,
+                                        "teachId": teachId,
+                                        "classNumber": classNumber,
+                                        "classGrade": classGrade
+                                    },
+                                    success: function (sign) {
+                                        if (sign == 1) {
+                                            alert("班级输入不合法，请重新输入！");
+                                            location.reload(true);
+                                        }
+                                        if (sign == 2) {
+                                            alert("查不到该班级，请检查后重新输入！");
+                                            location.reload(true);
+                                        }
+                                        if (sign == 3) {
+                                            alert("找不到该老师！");
+                                            location.reload(true);
+                                        }
+                                        if (sign == 4) {
+                                            alert("没有该课程信息！");
+                                            location.reload(true);
+                                        }
+                                        if (sign == 5) {
+                                            alert("有重名老师！");
+                                            location.reload(true);
+                                        }
+                                        if (sign == 6) {
+                                            alert("学期格式填写错误！");
+                                            location.reload(true);
+                                        }
+                                        if (sign == 7) {
+                                            alert("修改成功！");
+                                        }
+                                    },
+                                    error: function () {
+                                        alert("错误");
+                                    }
+
+                                })
+                            }
+                        });
+                    </script>
+                    <!-- end .form-footer section -->
+                </div>
+
+        </div>
+
+    </div>
+    <!-- end: .admin-form -->
+
+</div>
+</body>

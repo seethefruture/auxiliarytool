@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <script src="/js/pageJS.js"></script>
+    <script src="/js/myJavaScript.js"></script>
+    <link rel="stylesheet" type="text/css" href="/css/page.css">
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2>作业列表</h2>
+    </div>
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+        <div class="panel  heading-border">
+
+            <!-- message toolbar header -->
+            <div class="panel-menu">
+                <div class="row">
+
+                    <div class="hidden-xs hidden-sm col-md-3">
+                        <div class="btn-group" style="display: block">
+                            <button type="button" class="btn btn-default light" id="refreshInfo">
+                                刷新
+                            </button>
+                            <script>
+                                $("#refreshInfo").click(function () {
+                                    location.reload(true);
+                                })
+                            </script>
+                            <button type="button" class="btn btn-default light" id="insert" onclick="window.location.href=window.location.href='/teacher/test/addTest'">
+                                添加
+                            </button>
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="sign" value="option3">仅看当前学期
+                            </label>
+                            <a id="btn0"></a>
+                        </div>
+                        <div id="tableInfo"></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- message listings table -->
+            <div class="panel-body pn">
+                <div id="list">
+
+                </div>
+                <script>
+                    function list(currentPage,sign) {
+                        $.ajax({
+                            type: "POST",
+                            url: "/teacher/test/testOnlineList",
+                            data:
+                                {
+                                    "pageNum": currentPage,
+                                    "sign":sign
+                                },
+                            success: function (html) {
+
+                                $("#list").html(html);
+                                $("a.pg-next").on("click", function () {
+                                    console.log("next");
+                                    currentPage++;
+                                    list(currentPage,getCookie("sign"));
+                                });
+
+                                $("a.pg-prev").on("click", function () {
+                                    console.log("pre");
+                                    currentPage--;
+                                    //var current = parseInt(currentPage);
+                                    if (currentPage < 1) {
+                                        alert("已经是第一页！");
+                                        currentPage = 1;
+                                    }
+                                    list(currentPage,getCookie("sign"));
+                                })
+
+                                $("a.pg-first").on("click", function () {
+                                    list(1,getCookie("sign"));
+                                })
+
+                                $("#sign").on("click",function() {
+                                    if($(this).is(":checked")) {
+                                        setCookie("sign", 2, 1);
+                                        //list(1, 2);
+                                        var a = document.getElementsByClassName("pg-first")[0];
+                                        a.click();
+                                    }
+                                });
+                            },
+                            error: function () {
+                                $("#list").html("加载失败，请刷新重试！");
+                            }
+                        });
+                    }
+                    $(document).ready(function(){
+                        setCookie("sign", 1, 1);
+                        list(1, 1);
+                    });
+
+                    var currentPage = 1;
+
+                    $(document).ready($(function () {
+                        $("a.pg-next").on("click", function () {
+                            currentPage++;
+                            list(currentPage,getCookie("sign"));
+                        })
+                    }));
+                    //上一页
+                    $(document).ready($(function () {
+                        $("a.pg-prev").on("click", function () {
+                            console.log("pre");
+                            currentPage--;
+                            //var current = parseInt(currentPage);
+                            if (currentPage < 1) {
+                                alert("已经是第一页！");
+                                currentPage = 1;
+                            }
+                            else  list(currentPage,getCookie("sign"));
+                        })
+
+                        //查看是否选中checkbox
+                        $("#sign").on("click",function() {
+                            if($(this).is(":checked")) {
+                                setCookie("sign", 2, 1);
+                                //list(1, 2);
+                                //$("a.pg-first").click();
+                                var a = document.getElementsByClassName("pg-first")[0];
+                                a.click();
+                            }
+                        });
+                    }))
+
+                    $("a.pg-first").on("click", function () {
+                        list(1,getCookie("sign"));
+                    })
+                </script>
+
+                <div style="text-align: center;margin:30px auto;" id="page">
+                    <div id="pager" class="pager clearfix">
+                    </div>
+                </div>
+
+            </div>
+
+            <script src="/js/jquery.z-pager.js" type="text/javascript" charset="utf-8"></script>
+            <script type="text/javascript">
+                $("#pager").zPager({
+                    totalData: 50,
+                    htmlBox: $('#wraper'),
+                    btnShow: true,
+                    ajaxSetData: false,
+                    dataRender: function(data) {
+                        console.log(data + '---data-2');
+                        alert(data);
+                    },
+                });
+            </script>
+
+
+        </div>
+    </div>
+</div>
+</div>
+</body>
+</html>
+

@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <!-- Admin Forms CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/admin-tools/admin-forms/css/admin-forms.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+</head>
+<body>
+<div class="tray tray-center">
+
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 添加题库</h2>
+        <p class="lead"></p>
+    </div>
+
+    <!-- Validation Example -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel heading-border">
+
+            <form method="post" action="list.html" id="admin-form">
+
+                <div class="panel-body bg-light">
+
+                    <div class="section-divider mt20 mb40">
+                        <span> 基本信息 </span>
+                    </div>
+                    <!-- .section-divider -->
+
+
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <textarea class="gui-textarea" id="detail" name="comment" placeholder="题目"></textarea>
+                            <label  class="field-icon">
+                                <i class="fa fa-comments">
+
+                                </i>
+                            </label>
+                            <!--<span class="input-footer">-->
+                            <!--<strong>XXX:</strong> XXXXXXXXXXXXXXXXXXX..-->
+                            <!--</span>-->
+                        </label>
+
+                    </div>
+                    <!-- end section -->
+
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <textarea type="gui-textarea" name="cause"  class="gui-input" id="questionA" placeholder="A选项"></textarea>
+                            <label  class="field-icon">
+                                <i class="fa fa-comments"></i>
+                            </label>
+                            <span class="input-footer">
+                            <strong>不用加A.(后面都是如此)</strong>
+                            </span>
+                        </label>
+                    </div>
+                    <!-- end section -->
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <textarea type="gui-textarea" name="cause"  class="gui-input" id="questionB" placeholder="B选项"></textarea>
+                            <label  class="field-icon">
+                                <i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <textarea type="gui-textarea" name="cause"  class="gui-input" id="questionC" placeholder="C选项"></textarea>
+                            <label class="field-icon">
+                                <i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <textarea type="gui-textarea" name="cause"  class="gui-input" id="questionD" placeholder="D选项"></textarea>
+                            <label  class="field-icon">
+                                <i class="fa fa-comments"></i>
+                            </label>
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            <input type="radio" th:text="单选" name="choice_type" id="dan" class="radio-inline">
+                            <input type="radio" th:text="多选" name="choice_type" id="duo" class="radio-inline">
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            答案
+                            <div id="one" style="display: none">
+                                <!--单选-->
+                                <input type="radio" th:text="A" name="choice" id="A" class="radio-inline">
+                                <input type="radio" th:text="B" name="choice" id="B" class="radio-inline">
+                                <input type="radio" th:text="C" name="choice" id="C" class="radio-inline">
+                                <input type="radio" th:text="D" name="choice" id="D" class="radio-inline">
+                            </div>
+                            <div id="two" style="display: none">
+                                <!--多选-->
+                                <input type="checkbox" th:text="A" name="twice_choice" id="AA" class="checkbox-inline">
+                                <input type="checkbox" th:text="B" name="twice_choice" id="BB" class="checkbox-inline">
+                                <input type="checkbox" th:text="C" name="twice_choice" id="CC" class="checkbox-inline">
+                                <input type="checkbox" th:text="D" name="twice_choice" id="DD" class="checkbox-inline">
+                            </div>
+                            <script>
+                                $(document).ready(function(){
+                                    $("#dan").click(function () {
+                                        $("#two").hide();
+                                        $("#one").show();
+                                    })
+                                    $("#duo").click(function () {
+                                        $("#one").hide();
+                                        $("#two").show();
+                                    })
+                                });
+                            </script>
+                        </label>
+                    </div>
+
+                    <!-- end .form-body section -->
+                    <div class="panel-footer text-right">
+                        <input type="button" value="保存" class="btn btn-info" >  </input>
+                    </div>
+                    <script>
+                        $("input:button").click(function(){
+                            var detail = document.getElementById("detail").value;
+                            var questionA = document.getElementById("questionA").value;
+                            var questionB = document.getElementById("questionB").value;
+                            var questionC = document.getElementById("questionC").value;
+                            var questionD = document.getElementById("questionD").value;
+                            var radios = document.getElementsByName("choice_type");
+                            if(radios[0].checked){
+                                var type="0";
+                                var checkbox = document.getElementsByName("choice");
+                                if(checkbox[0].checked){
+                                    var answer = "A";
+                                }
+                                else if(checkbox[1].checked){
+                                    var answer = "B";
+                                }
+                                else if(checkbox[2].checked){
+                                    var answer = "C";
+                                }
+                                else if(checkbox[3].checked){
+                                    var answer = "D";
+                                }
+                            }
+                            else{
+                                var type="1";
+                                var answer="";
+                                var checkbox = document.getElementsByName("twice_choice");
+                                if(checkbox[0].checked){
+                                    answer="A";
+                                }
+                                if(checkbox[1].checked){
+                                    if(answer.length>0){
+                                        answer+=",B";
+                                    }
+                                    else{
+                                        answer="B";
+                                    }
+                                }
+                                if(checkbox[2].checked){
+                                    if(answer.length>0){
+                                        answer+=",C";
+                                    }
+                                    else{
+                                        answer="C";
+                                    }
+                                }
+                                if(checkbox[3].checked){
+                                    if(answer.length>0){
+                                        answer+=",D";
+                                    }
+                                    else{
+                                        answer="D";
+                                    }
+                                }
+                            }
+
+                            $.ajax({
+                                type: "POST",
+                                url: "/teacher/test/doInsert",
+                                dataType: "json",
+                                data: {
+                                    "detail": detail,
+                                    "questionA": questionA,
+                                    "questionB": questionB,
+                                    "questionC": questionC,
+                                    "questionD": questionD,
+                                    "type": type,
+                                    "answer": answer,
+                                },
+                                success: function (sign) {
+                                    if(sign==1){
+                                        alert("添加成功！");
+                                        location.reload(true);
+                                    }
+                                    else if(sign==0){
+
+                                        alert("添加失败，请重试！");
+                                    }
+                                },
+                                error:function () {
+                                    alert("错误");
+                                }
+
+                            })
+
+                        });
+                    </script>
+                    <!-- end .form-footer section -->
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+    <!-- end: .admin-form -->
+
+</div>
+</body>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<div class="panel  heading-border">
+    <!-- message listings table -->
+    <div class="panel-body pn">
+
+
+        <label class="">
+            选择班级：<input type="radio" th:each="class:${class1}" th:text="${class.class_name}+${class.class_number}+'班'" th:value="${class.class_id}" name="class">
+        </label>
+        <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+            <thead>
+            <tr>
+                <th class="hidden-xs" style="text-align: center">选择</th>
+                <th class="hidden-xs" style="text-align: center">题目</th>
+            </tr>
+            </thead>
+            <tbody class="course_info_ajax">
+            <tr class="message-unread" th:each="question:${question}">
+                <td>
+                    <input type="checkbox" th:value="${question.homeworkQuestionId}" name="question">
+                </td>
+                <td  th:text="${question.homeworkQuestionDetail}" style="text-align: center"></td>
+            </tr>
+
+            </tbody>
+        </table>
+        <br/>
+        开始时间：<input type="date" id="startDay">:<input type="time" id="startTime">
+        <br/>
+        <input type="button" onclick="addTest()" value="确定">
+        <script>
+            function addTest() {
+                var startDay = document.getElementById("startDay").value;
+                var startTime = document.getElementById("startTime").value;
+                var start = startDay+" "+startTime+":00";
+                var classes = document.getElementsByName("class");
+                var question = document.getElementsByName("question");
+                var questionContain=[];
+                var count=0;
+                //统计所有题目id和总数
+                for(var i=0;i<question.length;i++){
+                    if(question[i].checked){
+                        questionContain.push(question[i].value);
+                        count++;
+                    }
+                }
+                //选出班级
+                for(var j=0;j<classes.length;j++){
+                    if(classes[j].checked){
+                        var classId = classes[j].value;
+                    }
+                }
+                $.ajax({
+                    type: "POST",
+                    url: "/teacher/homework/insert",
+                    traditional: true,
+                    dataType: "json",
+                    data: {
+                        "start": start,
+                        "questionContain":questionContain,
+                        "classId":classId
+                    },
+                    success: function (sign) {
+                        if(sign==1){
+                            alert("添加成功！");
+                        }
+                        else{
+                            alert("添加失败，请重试！");
+                        }
+                        location.reload(true);
+                    },
+                    error:function () {
+                        alert("错误");
+                    }
+
+                })
+
+            }
+        </script>
+    </div>
+
+</div>
+
+</html>
+

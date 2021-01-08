@@ -1,0 +1,300 @@
+<!--
+Author: W3layouts
+Author URL: http://w3layouts.com
+License: Creative Commons Attribution 3.0 Unported
+License URL: http://creativecommons.org/licenses/by/3.0/
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Business Login Form Responsive Widget Template :: w3layouts</title>
+    <!-- Meta-Tags -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="utf-8">
+    <meta name="keywords"
+          content="Business Login Form a Responsive Web Template, Bootstrap Web Templates, Flat Web Templates, Android Compatible Web Template, Smartphone Compatible Web Template, Free Webdesigns for Nokia, Samsung, LG, Sony Ericsson, Motorola Web Design">
+    <script>
+        addEventListener("load", function () {
+            setTimeout(hideURLbar, 0);
+        }, false);
+
+        function hideURLbar() {
+            window.scrollTo(0, 1);
+        }
+    </script>
+    <script type="text/javascript" src="/js/myJavaScript.js"></script>
+
+    <!-- //Meta-Tags -->
+
+    <!-- css files -->
+    <link href="/css/font-awesome.min.css" rel="stylesheet" type="text/css" media="all">
+    <link href="/css/style.css" rel="stylesheet" type="text/css" media="all"/>
+    <script src="/js/jquery-2.2.4.js"></script>
+    <!-- //css files -->
+
+    <!-- google fonts -->
+    <link href="//fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+          rel="stylesheet">
+    <!-- //google fonts -->
+
+</head>
+<body>
+
+<div class="signupform">
+    <div class="container">
+        <!-- main content -->
+        <div class="agile_info">
+            <div class="w3l_form">
+                <div class="left_grid_info">
+                    <h1>网络教学辅助平台</h1>
+                    <p>一综合性师生交互平台</p>
+                    <img src="images/image.jpg" alt=""/>
+                </div>
+            </div>
+            <div class="w3_info">
+                <h2>Login to your Account</h2>
+                <p>Enter your details to login.</p>
+                <form action="#" method="post">
+                    <label>Username</label>
+                    <div class="input-group">
+                        <span class="fa fa-envelope" aria-hidden="true"></span>
+                        <input type="Text" placeholder="Enter Your Username" id="username" autocomplete="off">
+                    </div>
+                    <label>Password</label>
+                    <div class="input-group">
+                        <span class="fa fa-lock" aria-hidden="true"></span>
+                        <input type="Password" placeholder="Enter Password" required="required" id="password">
+                    </div>
+                    <div class="login-check">
+                        <label class="checkbox"><input type="checkbox" id="rememberMe" name="checkbox" checked="">
+                            <i> </i>
+                            Remember me</label>
+                    </div>
+                    <label>Choose Role</label>
+                    <div class="login-check">
+                        <input type="radio" name="checkbox" checked="checked" id="student"><i> </i>学生
+                        <input type="radio" name="checkbox" id="teacher"><i> </i>教师
+                        <input type="radio" name="checkbox" id="admin"><i> </i>管理员
+                    </div>
+
+                    <button class="btn btn-danger btn-block" type="button" id="submit">Login</button>
+                </form>
+                <p class="account1">学生账号注册 <a href="/register">Register here</a></p>
+            </div>
+        </div>
+        <!-- //main content -->
+    </div>
+    <!-- footer -->
+    <div class="footer">
+    </div>
+    <script>
+        //防止页面后退
+        history.pushState(null, null, document.URL);
+        window.addEventListener('popstate', function () {
+            history.pushState(null, null, document.URL);
+        });
+
+        $(document).ready($(function () {
+            var userAgent = navigator.userAgent; //取得浏览器的userAgent字符串
+            var isIE = userAgent.indexOf("compatible") > -1 && userAgent.indexOf("MSIE") > -1; //判断是否IE<11浏览器
+            var isEdge = userAgent.indexOf("Edge") > -1 && !isIE; //判断是否IE的Edge浏览器
+            var isIE11 = userAgent.indexOf('Trident') > -1 && userAgent.indexOf("rv:11.0") > -1; //判断是否是IE11
+            if (isIE || isEdge || isIE11) {
+                $(".checkbox i").hide();
+            }
+
+            //在这里检查是否要自动登录
+            let signData = checkCookieWhenLogin();
+            let data = {
+                "username": signData.username,
+                "password": signData.password,
+            };
+            if (signData.username != null) {
+                switch (signData.type) {
+                    case '1':
+                        studentSignIn(data, function (data, statue, request) {
+                            if (request.getResponseHeader("result") === "mismatch") {
+                                alert("密码发生修改！");
+                                signOut();
+                            } else if (request.getResponseHeader("result") === "non-existent") {
+                                alert("账户名不存在");
+                                signOut();
+                            } else {
+                                //效验通过通知前端页重定向
+                                window.location.href = request.getResponseHeader("redirect");
+                            }
+                        }, function (msg) {
+                            alert("msg");
+                        });
+                        break;
+                    case '2':
+                        teacherSignIn(data);
+                        break;
+                    case '3':
+                        adminSignIn(data);
+                        break;
+                    default :
+                        break;
+                }
+            }
+
+        }));
+
+        $("#submit").one("click", function () {
+            var choose = document.getElementsByName("checkbox");
+            var username = document.getElementById("username").value;
+            var password = document.getElementById("password").value;
+            if (username === "" || password === "") {
+                alert("不能为空");
+            }
+            //学生登录
+            if (choose[1].checked) {
+                let data = {
+                    "username": username,
+                    "password": password
+                };
+                studentSignIn(data,
+                    function (data, statue, request) {
+                        if (request.getResponseHeader("result") === "mismatch") {
+                            alert("账户名密码不匹配！");
+                            document.getElementById("password").value = "";
+                        } else if (request.getResponseHeader("result") === "non-existent") {
+                            alert("账户名不存在");
+                            document.getElementById("password").value = "";
+                            document.getElementById("username").value = "";
+                        } else {
+                            //效验通过通知前端页重定向
+                            window.location.href = request.getResponseHeader("redirect");
+                            if ($("#rememberMe").is(':checked')) {
+                                rememberMe(username, password, 1);
+                            }
+                        }
+                    },
+                    function (msg) {
+                        alert("msg");
+                    });
+            }
+            //教师登录
+            if (choose[2].checked) {
+                let data = {
+                    "username": username,
+                    "password": password
+                };
+                teacherSignIn(data,
+                    function (msg) {
+                        if (msg === "mismatch") {
+                            alert("账号密码不匹配！");
+                            document.getElementById("password").value = "";
+                        } else {
+                            window.location.href = "/teacher/mainInterface";
+                            if ($("#rememberMe").is(':checked')) {
+                                rememberMe(username, password, 2);
+                            }
+                        }
+                    },
+                    function (msg) {
+                        alert("msg");
+                    }
+                )
+            }
+            //管理员登录
+            if (choose[3].checked) {
+                let data = {
+                    "username": username,
+                    "password": password
+                };
+                adminSignIn(data,
+                    function (msg) {
+                        if (msg === "登陆失败！") {
+                            alert("登陆失败请重输");
+                            document.getElementById("password").value = "";
+                        } else if (msg === "0") {
+                            window.location.href = "/admin/mainInterface";
+                            if ($("#rememberMe").is(':checked')) {
+                                rememberMe(username, password, 3);
+                            }
+                        } else {
+                            window.location.href = "/gradeAdmin/mainInterface";
+                            if ($("#rememberMe").is(':checked')) {
+                                rememberMe(username, password, 4);
+                            }
+                        }
+                    },
+                    function (msg) {
+                        alert("msg");
+                    }
+                );
+            }
+        })
+    </script>
+    <script>
+        function studentSignIn(data, success, err) {
+            $.ajax({
+                type: "POST",
+                url: "/loginCheck",
+                dataType: "text",
+                data: data,
+                success: success,
+                error: err,
+            })
+        }
+
+        function teacherSignIn(data) {
+            $.ajax({
+                type: "POST",
+                url: "/teacher/doLogin",
+                dataType: "text",
+                data: {
+                    "username": data.username,
+                    "password": data.password
+                },
+                success: function (msg) {
+                    if (msg != "") {
+                        alert("登陆失败请重输");
+                        document.getElementById("password").value = "";
+                    }
+                    else{
+                        window.location.href="/teacher/mainInterface";
+                    }
+                },
+                error:function (msg) {
+                    alert("msg");
+                }
+
+            })
+        }
+
+        function adminSignIn(data) {
+            $.ajax({
+                type: "POST",
+                url: "/admin/doLogin",
+                dataType: "text",
+                data: {
+                    "username": data.username,
+                    "password": data.password
+                },
+                success: function (msg) {
+                    if (msg == "登陆失败！") {
+                        alert("登陆失败请重输");
+                        document.getElementById("password").value = "";
+                    }
+                    else if(msg=="0"){
+                        window.location.href="/admin/mainInterface";
+                    }
+                    else {
+                        window.location.href="/gradeAdmin/mainInterface";
+                    }
+                },
+                error:function (msg) {
+                    alert("msg");
+                }
+
+            })
+        }
+
+    </script>
+    <!-- footer -->
+</div>
+
+</body>
+</html>

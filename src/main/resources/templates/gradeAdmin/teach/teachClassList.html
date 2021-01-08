@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<div class="panel  heading-border">
+
+    <!-- message toolbar header -->
+    <div class="panel-menu">
+        <div class="row">
+
+            <div class="hidden-xs hidden-sm col-md-3">
+                <div class="btn-group" style="display: block">
+                    <button type="button" class="btn btn-default light" id="refreshInfo">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                    <a id="btn0"></a>
+                </div>
+                <div id="tableInfo"></div>
+            </div>
+        </div>
+
+    </div>
+    <!-- message listings table -->
+    <div class="panel-body pn">
+
+
+        <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+            <thead>
+            <tr>
+                <th class="hidden-xs" style="text-align: center"></th>
+                <th class="hidden-xs" style="text-align: center">年级</th>
+                <th class="hidden-xs" style="text-align: center">班级名</th>
+                <th class="hidden-xs" style="text-align: center">班级号</th>
+            </tr>
+            </thead>
+            <tbody class="course_info_ajax">
+            <tr class="message-unread" th:each="classList:${classList}">
+                <td>
+                    <input type="radio" th:value="${classList.classId}" name="class">
+                </td>
+                <td th:text="${classList.classGrade}" style="text-align: center"></td>
+                <td th:text="${classList.className}" style="text-align: center"></td>
+                <td th:text="${classList.classNumber}" style="text-align: center"></td>
+            </tr>
+
+
+            </tbody>
+        </table>
+        <div class="panel-footer text-right">
+            请选择学年：<input th:each="i : ${#numbers.sequence(1,4)}" th:value="${i}"  th:text="${i}" type="radio" name="year" checked>
+            请选择学期：<input th:each="i : ${#numbers.sequence(1,2)}" th:value="${i}"  th:text="${i}" type="radio" name="term" checked>
+        </div>
+        <div class="panel-footer text-right">
+            <input type="button" value="上一项" class="btn btn-info" onclick="window.location.href='/gradeAdmin/teach/insert1'">  </input>
+            <input type="button" value="提交" class="btn btn-info" onclick="next()">  </input>
+        </div>
+        <script>
+            function next() {
+                var classList = document.getElementsByName("class");
+                var yearList = document.getElementsByName("year");
+                var termList = document.getElementsByName("term");
+                var num = 0;
+                var classId = 0;
+                var year = "";
+                var term = "";
+                for(var i=0;i<classList.length;i++){
+                    if(classList[i].checked){
+                        classId = classList[i].value;
+                    }
+                }
+                for(var i=0;i<yearList.length;i++){
+                    if(yearList[i].checked){
+                        year = yearList[i].value;
+                    }
+                }
+                for(var i=0;i<termList.length;i++){
+                    if(termList[i].checked){
+                        term = termList[i].value;
+                    }
+                }
+                var teachTime = year+","+term;
+                if(classId==0){
+                    alert("未选择！请重选");
+                }
+                else {
+                    $.ajax({
+                        type: "GET",
+                        url: "/gradeAdmin/teach/doInsert",
+                        dataType: "json",
+                        data: {
+                            "classId": classId,
+                            "teachTime":teachTime
+                        },
+                        success: function (sign) {
+                            if (sign == 1) {
+                                alert("新建成功！");
+                            }
+                            else {
+                                alert("新建失败，请重试！");
+                            }
+                        },
+                        error: function () {
+                            alert("错误");
+                        }
+
+                    })
+                }
+
+            }
+        </script>
+    </div>
+
+</div>
+
+</html>
+

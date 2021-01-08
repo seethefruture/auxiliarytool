@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>历史作业浏览</title>
+</head>
+<body>
+<div>题目</div>
+<div th:each="HomeWorkQuestion:${HomeWorkQuestionInfos}">
+    <div th:text="问题：+${HomeWorkQuestion.homeworkQuestionDetail}"></div>
+    <div th:text="你的答案：+${HomeWorkQuestion.homeworkQuestionAnswer}"></div>
+    <div th:text="涉及章节：+${HomeWorkQuestion.homeworkQuestionChapter}"></div>
+</div>
+
+
+<div th:text="得分+${HomeWorkScore}"></div>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+
+<script src="/js/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("a[class='delete']").click(function(){
+            var mymessage=confirm("你确定要删除吗?");
+            if(mymessage==true){
+                var id = $(this).attr("name");
+                $.ajax({
+                    type: "GET",
+                    url: "/admin/teacher/delete",
+                    dataType: "json",
+                    data: {
+                        "teacherId": id
+                    },
+                    success: function (sign) {
+                        if(sign==1){
+                            alert("删除成功！");
+                        }
+                        else if(sign==0){
+                            alert("删除失败");
+                        }
+                        location.reload(true);
+                    },
+                    error:function () {
+                        alert("错误");
+                    }
+
+                })
+            }
+        });
+    });
+</script>
+<table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+    <thead>
+    <tr>
+        <th class="hidden-xs" style="text-align: center">序号</th>
+        <th class="hidden-xs" style="text-align: center">教师名</th>
+        <th class="hidden-xs" style="text-align: center">操作</th>
+    </tr>
+    </thead>
+    <tbody class="course_info_ajax">
+    <tr class="message-unread" th:each="list:${list.list}">
+        <td class="hidden-xs" style="text-align: center" th:text="${listStat.index}+1"></td>
+        <td  th:text="${list.teacherName}" style="text-align: center"></td>
+
+        <td  style="text-align: center">
+            <!--<a th:text="删除" class="delete" th:name="${list.teacherId}" style="cursor: pointer"></a>-->
+            <a th:href="@{'/admin/teacher/edit?teacherId='+${list.teacherId}}">编辑</a>
+        </td>
+    </tr>
+
+    </tbody>
+</table>
+
+</html>
+

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $("a[class='delete']").click(function(){
+            var mymessage=confirm("你确定要删除吗?");
+            if(mymessage==true){
+                var id = $(this).attr("name");
+                $.ajax({
+                    type: "GET",
+                    url: "/teacher/test/delete",
+                    dataType: "json",
+                    data: {
+                        "testId": id
+                    },
+                    success: function (sign) {
+                        if(sign==1){
+                            alert("删除成功！");
+                        }
+                        else if(sign==0){
+                            alert("删除失败");
+                        }
+                        location.reload(true);
+                    },
+                    error:function () {
+                        alert("错误");
+                    }
+
+                })
+            }
+        });
+    });
+</script>
+        <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+            <thead>
+            <tr>
+                <th class="hidden-xs" style="text-align: center">序号</th>
+                <th class="hidden-xs" style="text-align: center">开始时间</th>
+                <th class="hidden-xs" style="text-align: center">截止时间</th>
+                <th class="hidden-xs" style="text-align: center">课程名</th>
+                <th class="hidden-xs" style="text-align: center">年级</th>
+                <th class="hidden-xs" style="text-align: center">班级</th>
+                <th class="hidden-xs" style="text-align: center">已答人数</th>
+                <th class="hidden-xs" style="text-align: center">未答人数</th>
+                <th class="hidden-xs" style="text-align: center">测试类型(固定/随机)</th>
+                <th class="hidden-xs" style="text-align: center">正确率</th>
+                <th class="hidden-xs" style="text-align: center">操作</th>
+            </tr>
+            </thead>
+            <tbody class="course_info_ajax">
+            <tr class="message-unread" th:each="list:${list.list}">
+                <td class="hidden-xs" style="text-align: center" th:text="${listStat.index}+1"></td>
+                <td  th:text="${#dates.format(list.test_time, 'yyyy-MM-dd HH:mm:ss')}" style="text-align: center"></td>
+                <td  th:text="${#dates.format(list.submit_time, 'yyyy-MM-dd HH:mm:ss')}" style="text-align: center"></td>
+                <td  th:text="${list.course_name}" style="text-align: center"></td>
+                <td  th:text="${list.class_grade}" style="text-align: center"></td>
+                <td  th:text="${list.class_name}+${list.class_id}+'班'" style="text-align: center"></td>
+                <td  th:text="${list.answeredNum}" style="text-align: center"></td>
+                <td  th:text="${list.unAnsweredNum}" style="text-align: center"></td>
+                <td  th:text="${list.test_num}==0?'固定':'随机'+${list.test_num}" style="text-align: center"></td>
+                <td  th:text="${list.averageScore}" style="text-align: center"></td>
+
+                <td  style="text-align: center">
+                    <a th:href="@{'/teacher/test/testCorrect/?testId='+${list.test_id}}" th:text="正确率"></a>
+                    <a th:href="@{'/teacher/test/studentScore?testId='+${list.test_id}}" th:text="成绩"></a>
+                    <a  th:text="删除" class="delete" th:name="${list.test_id}" ></a>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+

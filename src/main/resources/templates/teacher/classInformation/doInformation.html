@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<table border="1px">
+<tr>
+    <th>课程名</th>
+    <th>年级</th>
+    <th>班级</th>
+</tr>
+<tr th:each="infor:${information}">
+    <td th:text="${infor.course_name}"></td>
+    <td th:text="${infor.class_grade}"></td>
+    <td th:text="${infor.class_name}+${infor.class_number}+'班'"></td>
+</tr>
+</table>
+</html>

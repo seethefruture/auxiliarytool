@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+</head>
+<body>
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 题库列表</h2>
+    </div>
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel  heading-border">
+
+            <!-- message toolbar header -->
+            <div class="panel-menu">
+                <div class="row">
+
+                    <div class="hidden-xs hidden-sm col-md-3">
+                        <div class="btn-group" style="display: block">
+                            <button type="button" class="btn btn-default light" id="refreshInfo">
+                                刷新
+                            </button>
+                            <script>
+                                $("#refreshInfo").click(function () {
+                                    location.reload(true);
+                                })
+                            </script>
+                            <a id="btn0"></a>
+                        </div>
+                        <div id="tableInfo"></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- message listings table -->
+            <div class="panel-body pn">
+
+
+                <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+                    <thead>
+                    <tr>
+                        <th class="hidden-xs" style="text-align: center">序号</th>
+                        <th class="hidden-xs" style="text-align: center">课程</th>
+                    </tr>
+                    </thead>
+                    <tbody class="course_info_ajax">
+                    <tr class="message-unread" th:each="course:${course}">
+                        <td class="hidden-xs" style="text-align: center" th:text="${courseStat.index}+1"></td>
+                        <td style="text-align: center">
+                            <a  th:text="${course.course_name}"
+                                th:href="@{'/teacher/test/questionBankTeachId/?courseId='+${course.course_id}}"
+                            ></a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<br/>
+
+</div>
+</body>
+</html>

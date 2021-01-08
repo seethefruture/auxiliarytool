@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <script src="/js/myJavaScript.js"></script>
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2>任课</h2>
+    </div>
+    <form class="form-inline">
+        <div style="margin-left: 30px;margin-bottom: 15px" class="form-group">
+            <input type="text" id="courseName" placeholder="在此输入课程名" value="" class="form-control">
+            <input type="text" id="className" placeholder="在此输入班级名" value="" class="form-control">
+            <input type="button" id="search" value="搜索" class="btn btn-default">
+        </div>
+    </form>
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+        <div class="panel  heading-border">
+            <!-- message toolbar header -->
+            <div class="panel-menu">
+                <div class="row">
+
+                    <div class="hidden-xs hidden-sm col-md-3">
+                        <div class="btn-group" style="display: block">
+                            <button type="button" class="btn btn-default light" id="refreshInfo">
+                                <!--<i class="fa fa-refresh"></i>-->
+                                刷新
+                            </button>
+                            <script>
+                                $("#refreshInfo").click(function () {
+                                    location.reload(true);
+                                })
+                            </script>
+                            <button type="button" class="btn btn-default light" id="insert" onclick="window.location.href='/gradeAdmin/teach/insert1'">
+                                <!--<i class="glyphicon glyphicon-plus"></i>-->
+                                添加
+                            </button>
+                            <a id="btn0"></a>
+                        </div>
+                        <div id="tableInfo"></div>
+                    </div>
+
+                </div>
+
+            </div>
+            <!-- message listings table -->
+            <div class="panel-body pn">
+                <div id="list">
+                </div>
+
+        <script>
+            $(document).ready(function(){
+                list("","",1);
+            });
+            function list(courseName,className,currentPage) {
+                $.ajax({
+                    type:"GET",
+                    url:"/gradeAdmin/teach/showList",
+                    data:
+                        {
+                            "courseName":courseName,
+                            "className":className,
+                            "pageNum": currentPage
+                        },
+                    success: function(html){
+                        $("#list").html(html);
+                        $("a.pg-next").on("click", function () {
+                            console.log("next");
+                            currentPage++;
+                            list(courseName,className,currentPage);
+                        });
+
+                        $("a.pg-prev").on("click", function () {
+                            console.log("pre");
+                            currentPage--;
+                            if (currentPage < 1) {
+                                alert("已经是第一页！");
+                                currentPage = 1;
+                            }
+                            list(courseName,className,currentPage);
+                        })
+                        $("a.pg-first").on("click", function () {
+                            var courseName = getCookie("courseName");
+                            var className = getCookie("className");
+                            list(courseName,className,1);
+                        })
+                    },
+                    error:function () {
+                        $("#list").html("加载失败，请刷新重试！");
+                    }
+                });
+            }
+            var currentPage = 1;
+
+
+            $("#search").click(function () {
+                var courseName = document.getElementById("courseName").value;
+                var className = document.getElementById("className").value;
+                setCookie("courseName",courseName,1);
+                setCookie("className",className,1);
+                list(courseName,className,currentPage);
+            });
+
+            //var currentPage = 1;
+            //下一页
+            $(document).ready($(function () {
+                $("a.pg-next").on("click", function () {
+                    currentPage++;
+                    var courseName = getCookie("courseName");
+                    var className = getCookie("className");
+                    list(courseName,className,currentPage);
+                })
+
+                $("a.pg-first").on("click", function () {
+                var courseName = getCookie("courseName");
+                var className = getCookie("className");
+                list(courseName,className,1);
+                })
+            }));
+            //上一页
+            $(document).ready($(function () {
+                $("a.pg-prev").on("click", function () {
+                    console.log("pre");
+                    currentPage--;
+                    //var current = parseInt(currentPage);
+                    if (currentPage < 1) {
+                        alert("已经是第一页！");
+                        currentPage = 1;
+                    }
+                    var courseName = getCookie("courseName");
+                    var className = getCookie("className");
+                    list(courseName,className,currentPage);
+                })
+            }))
+        </script>
+                <div style="text-align: center;margin:30px auto;">
+                    <div id="pager" class="pager clearfix">
+                    </div>
+                </div>
+
+            </div>
+
+            <script src="/js/jquery.z-pager.js" type="text/javascript" charset="utf-8"></script>
+            <script type="text/javascript">
+                $("#pager").zPager({
+                    totalData: 50,
+                    htmlBox: $('#wraper'),
+                    btnShow: true,
+                    ajaxSetData: false,
+                    dataRender: function(data) {
+                        console.log(data + '---data-2');
+                        alert(data);
+                    },
+                });
+            </script>
+        </div>
+
+    </div>
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<!-- end: .tray-center -->
+</body>
+</html>

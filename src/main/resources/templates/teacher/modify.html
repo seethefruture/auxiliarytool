@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="/js/jquery.min.js"></script>
+    <script type="text/javascript">
+        function fun() {
+            var username = document.getElementById("teacherName").value;
+            var password = document.getElementById("password").value;
+            $.ajax({
+                type: "POST",
+                url: "/teacher/doModify",
+                dataType: "text",
+                data: {
+                    "teacherName": username,
+                    "password": password
+                },
+                success: function (msg) {
+                    if (msg != "") {
+                        alert("修改成功！");
+                    }
+                },
+                error:function (msg) {
+                    alert("msg");
+                }
+
+            })
+        }
+
+    </script>
+</head>
+<body>
+修改个人信息
+姓名：<input type="text" name="teacherName" id="teacherName">
+密码:<input type="password" name="password" id="password">
+<input type="button" value="提交" onclick="fun()">
+</body>
+</html>

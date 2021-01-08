@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <script src="/js/jquery.min.js"></script>
+    <script>
+        $(document).ready(function() {
+            $("a[class='delete']").click(function(){
+                var mymessage=confirm("你确定要删除吗?");
+                if(mymessage==true){
+                    var id = $(this).attr("name");
+                    $.ajax({
+                        type: "GET",
+                        url: "/gradeAdmin/faculty/delete",
+                        dataType: "json",
+                        data: {
+                            "facultyId": id
+                        },
+                        success: function (sign) {
+                            if(sign==1){
+                                alert("删除成功！");
+                            }
+                            else if(sign==0){
+                                alert("删除失败");
+                            }
+                            location.reload(true);
+                        },
+                        error:function () {
+                            alert("错误");
+                        }
+
+                    })
+                }
+            });
+        });
+    </script>
+    <link rel="stylesheet" type="text/css" href="/css/page.css">
+</head>
+<body>
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 系管理</h2>
+    </div>
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel  heading-border">
+
+            <!-- message toolbar header -->
+            <div class="panel-menu">
+                <div class="row">
+
+                    <div class="hidden-xs hidden-sm col-md-3">
+                        <div class="btn-group" style="display: block">
+                            <button type="button" class="btn btn-default light" id="refreshInfo">
+                                刷新
+                            </button>
+                            <script>
+                                $("#refreshInfo").click(function () {
+                                    location.reload(true);
+                                })
+                            </script>
+                            <button type="button" class="btn btn-default light" id="insert"  onclick="window.location.href='/gradeAdmin/faculty/insert'">
+                                添加
+                            </button>
+                            <a id="btn0"></a>
+                        </div>
+                        <div id="tableInfo"></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- message listings table -->
+            <div class="panel-body pn">
+
+
+                <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+                    <thead>
+                    <tr>
+                        <th class="hidden-xs" style="text-align: center">序号</th>
+                        <th class="hidden-xs" style="text-align: center">系</th>
+                        <th class="hidden-xs" style="text-align: center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody class="course_info_ajax">
+                    <tr class="message-unread" th:each="list:${list}">
+                        <td class="hidden-xs" style="text-align: center" th:text="${listStat.index}+1"></td>
+                        <td  th:text="${list.facultyName}" style="text-align: center"></td>
+                        <td style="text-align: center">
+                            <a th:href="@{'/gradeAdmin/faculty/edit?facultyId='+${list.facultyId}}">编辑</a>
+                        </td>
+                    </tr>
+
+                    </tbody>
+
+                </table>
+            </div>
+
+        </div>
+
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<br/>
+
+</div>
+</body>
+</html>

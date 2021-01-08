@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" type="text/css" href="/css/page.css">
+<script src="/js/jquery.min.js"></script>
+<table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+    <thead>
+    <tr>
+        <th class="hidden-xs" style="text-align: center">题目</th>
+        <th class="hidden-xs" style="text-align: center">A选项</th>
+        <th class="hidden-xs" style="text-align: center">B选项</th>
+        <th class="hidden-xs" style="text-align: center">C选项</th>
+        <th class="hidden-xs" style="text-align: center">D选项</th>
+        <th class="hidden-xs" style="text-align: center">答案</th>
+        <th class="hidden-xs" style="text-align: center">类型（单选/多选）</th>
+        <th class="hidden-xs" style="text-align: center">正确率</th>
+        <th class="hidden-xs" style="text-align: center">引用次数</th>
+        <th class="hidden-xs" style="text-align: center">操作</th>
+    </tr>
+    </thead>
+    <tbody class="course_info_ajax">
+    <tr class="message-unread" th:each="question:${question.list}">
+        <td  th:text="${question.testQuestionDetail}" style="text-align: center"></td>
+        <td  th:text="${question.testQuestionA}" style="text-align: center"></td>
+        <td  th:text="${question.testQuestionB}" style="text-align: center"></td>
+        <td  th:text="${question.testQuestionC}" style="text-align: center"></td>
+        <td  th:text="${question.testQuestionD}" style="text-align: center"></td>
+        <td  th:text="${question.testQuestionAnswer}" style="text-align: center"></td>
+        <td  th:text="${question.testQuestionType}=='0'?'单选':'多选'" style="text-align: center"></td>
+        <td  th:text="${question.testQuestionCorrect}" style="text-align: center" th:if="${question.testQuestionCorrect} ne 0.00"></td>
+        <td  th:text="0.00" style="text-align: center" th:if="${question.testQuestionCorrect} eq 0.00"></td>
+        <td  th:text="${question.testQuestionNum}" style="text-align: center"></td>
+        <td  style="cursor:pointer;text-align: center;color:dodgerblue;text-decoration: underline">
+            <a th:href="@{'/teacher/test/edit/?questionId='+${question.questionId}}" th:text="编辑"></a>
+            <!--<a  th:text="删除" class="delete" th:name="${question.questionId}" ></a>-->
+        </td>
+
+    </tr>
+
+    </tbody>
+</table>
+
+</html>
+

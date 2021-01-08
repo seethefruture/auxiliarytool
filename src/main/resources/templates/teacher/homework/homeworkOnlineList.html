@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+    <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+        <thead>
+        <tr>
+            <th class="hidden-xs" style="text-align: center">序号</th>
+            <th class="hidden-xs" style="text-align: center">开始时间</th>
+            <!--<th class="hidden-xs" style="text-align: center">课程名</th>-->
+            <th class="hidden-xs" style="text-align: center">年级</th>
+            <th class="hidden-xs" style="text-align: center">班级</th>
+            <th class="hidden-xs" style="text-align: center">章节</th>
+            <th class="hidden-xs" style="text-align: center">已答人数</th>
+            <th class="hidden-xs" style="text-align: center">未答人数</th>
+            <th class="hidden-xs" style="text-align: center">已批该人数</th>
+            <th class="hidden-xs" style="text-align: center">操作</th>
+        </tr>
+        </thead>
+        <tbody class="course_info_ajax">
+        <tr class="message-unread" th:each="list:${list.list}">
+            <td class="hidden-xs" style="text-align: center" th:text="${listStat.index}+1"></td>
+            <td  th:text="${#dates.format(list.submit_time, 'yyyy-MM-dd HH:mm:ss')}" style="text-align: center"></td>
+            <!--<td  th:text="${list.course_name}" style="text-align: center"></td>-->
+            <td  th:text="${list.class_grade}" style="text-align: center"></td>
+            <td  th:text="${list.class_name}+${list.class_id}+'班'" style="text-align: center"></td>
+            <td  th:text="${list.homework_chapter}" style="text-align: center"></td>
+            <td  th:text="${list.answeredNum}" style="text-align: center"></td>
+            <td  th:text="${list.unAnsweredNum}" style="text-align: center"></td>
+            <td  th:text="${list.correctNum}" style="text-align: center"></td>
+            <td  style="text-align: center">
+                <a th:href="@{'/teacher/homework/correctHomework?homeworkId='+${list.homework_id}}" th:text="点击批改"></a>
+                <a  th:text="删除" class="delete" th:name="${list.homework_id}+','+${list.answeredNum}" style="cursor: pointer" title="请勿删除已有人做过的作业！"></a>
+            </td>
+        </tr>
+
+        </tbody>
+    </table>
+<script>
+    $(document).ready(function() {
+        $("a[class='delete']").click(function(){
+            var message = $(this).attr("name");
+            var arr = message.split(",");
+            var number = arr[1];
+            if(number==0) {
+                var mymessage = confirm("你确定要删除吗?");
+                if (mymessage == true) {
+                    var id = arr[0];
+                    $.ajax({
+                        type: "POST",
+                        url: "/teacher/homework/deleteOnline",
+                        dataType: "json",
+                        data: {
+                            "homeworkId": id
+                        },
+                        success: function (sign) {
+                            if (sign == 1) {
+                                alert("删除成功！");
+                            } else if (sign == 0) {
+                                alert("删除失败");
+                            }
+                            window.location.href='/teacher/homework/homeworkBank';
+                        },
+                        error: function () {
+                            alert("错误");
+                        }
+
+                    })
+                }
+            }
+            else{
+                alert("对不起，该作业已有同学作答，不能删除！");
+            }
+        });
+    });
+</script>
+</html>
+

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2>添加测试</h2>
+        <h3>第二项</h3>
+        <h4>选择班级和提交时间</h4>
+    </div>
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;" id="list">
+        <div class="panel  heading-border">
+
+            <!-- message toolbar header -->
+            <div class="panel-menu">
+                <div class="row">
+
+                    <div class="hidden-xs hidden-sm col-md-3">
+                        <div class="btn-group" style="display: block">
+                            <button type="button" class="btn btn-default light" id="refreshInfo">
+                                <i class="fa fa-refresh"></i>
+                            </button>
+                            <script>
+                                $("#refreshInfo").click(function () {
+                                    location.reload(true);
+                                })
+                            </script>
+                            <a id="btn0"></a>
+                        </div>
+                        <div id="tableInfo"></div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- message listings table -->
+            <div class="panel-body pn">
+
+
+                <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+                    <thead>
+                    <tr>
+                        <th class="hidden-xs" style="text-align: center"></th>
+                        <th class="hidden-xs" style="text-align: center">序号</th>
+                        <th class="hidden-xs" style="text-align: center">班级名</th>
+                    </tr>
+                    </thead>
+                    <tbody class="course_info_ajax">
+                    <tr class="message-unread" th:each="class1:${class1}">
+                        <td><input type="radio" th:value="${class1.class_id}" name="class"></td>
+                        <td  th:text="${class1Stat.index}+1" style="text-align: center"></td>
+                        <td  th:text="${class1.class_grade}+'级'+${class1.class_name}+${class1.class_number}+'班'" style="text-align: center"></td>
+                    </tr>
+
+
+                    </tbody>
+                </table>
+                开始时间：<input type="date" id="startDay">:<input type="time" id="startTime">
+                <div class="panel-footer text-right">
+                    <input type="button" value="下一项" class="btn btn-info" onclick="next()">  </input>
+                </div>
+                <script>
+                    function next() {
+                        var class1 = document.getElementsByName("class");
+                        var startDay = document.getElementById("startDay").value;
+                        var startTime = document.getElementById("startTime").value;
+                        var start = startDay+" "+startTime+":00";
+                        var classId = 0;
+                        for(var i=0;i<class1.length;i++){
+                            if(class1[i].checked){
+                                classId = class1[i].value;
+                            }
+                        }
+                        if(classId==0||startDay==""||startTime==""){
+                            alert("未选择！请重选");
+                        }
+                        else {
+                            window.location.href="/teacher/homework/addHomeworkQuestion?classId="+classId+"&start="+start;
+                        }
+
+                    }
+                </script>
+            </div>
+
+        </div>
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<!-- end: .tray-center -->
+</body>
+</html>

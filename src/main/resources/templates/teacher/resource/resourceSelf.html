@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 任课资源</h2>
+    </div>
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;" id="list">
+        <script>
+            function list() {
+                $.ajax({
+                    type:"GET",
+                    url:"/teacher/resource/doResourceSelf",
+                    success: function(html){
+                        $("#list").html(html);
+                    },
+                    error:function () {
+                        $("#list").html("加载失败，请刷新重试！");
+                    }
+                });
+            }
+            $(function() {
+                list();
+            })
+        </script>
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<!-- end: .tray-center -->
+</body>
+</html>

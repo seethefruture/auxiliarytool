@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>历史作业信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="assets/skin/default_skin/css/theme.css">
+    <script src="js/jquery-2.2.4.js"></script>
+    <script src="js/myJavaScript.js"></script>
+    <script>
+        var pageSize = 5;    //每页显示的记录条数
+        var curPage = 0;        //当前页
+        var lastPage;        //最后页
+        var direct = 0;        //方向
+        var len;            //总行数
+        var page;            //总页数
+        var begin;
+        var end;
+
+        $(document).ready(function () {
+            var courseName = getCookie("courseName");
+            var teacherName = getCookie("teacherName");
+            $("#h2").text("查看" + courseName + "(" + teacherName + ")的历史作业信息");
+            $(".view").click(function () {
+                var data = {
+                    "homework_id": $(this).parent().parent().find(".homework_id").text()
+                };
+                post("/viewHistoryHomeWork", data);
+            });
+            $("#refreshInfo").click(function () {
+                //刷新课程信息
+                $.ajax({
+                    type: "post",
+                    url: "/getHistoryHomeWorkAJAX",
+                    dataType: "json",
+                    timeout: 2000,
+                    complete: function (request, result) {
+                        if (request.getResponseHeader("result") == "fail") {
+                            alert("刷新错误，服务器拒绝了您的请求");
+
+                        } else if (request.getResponseHeader("result") == "success") {
+
+                        }
+                    },
+                    data: {
+                        'courseName': courseName,
+                        'teacherName': teacherName
+                    },
+                    error: function () {
+                        alert("局部刷新错误，点击确定刷新整个页面");
+
+                    },
+                    success: function (result) {
+                        $(".course_info_ajax").empty();
+                        $.each(result, function (index, value) {
+                            //这是一行数据
+                            $(".course_info_ajax").append('<tr class="message-unread">' +
+                                '<td class="homework_id" style="text-align: center;display: none">' + value["homework_id"] + '</td>' +
+                                ' <td class="hidden-xs" style="text-align: center">' + parseInt(index + 1) + '</td> ' +
+                                '<td class="course_name"   style="cursor:pointer;text-align: center;color:dodgerblue;text-decoration: underline">' + value["course_name"] + '</td>' +
+                                ' <td class="teacher_name" style="text-align: center">' + value["teacher_name"] + '</td> ' +
+                                ' <td class="hidden-xs"  style="text-align: center">' + value["homework_chapter"] + '</td>' +
+                                '<td class="hidden-xs" style="text-align: center">' + value["submit_time"] + '</td>' +
+                                ' <td > <a class = "view" style="cursor: pointer"> 查看详情 </a></td >' +
+                                '</tr>');
+
+
+                        });
+                        pageFlipper();
+                    }
+                })
+            });
+            pageFlipper();
+            $("#btn1").click(function firstPage() {    // 首页
+                curPage = 1;
+                direct = 0;
+                displayPage();
+            });
+            $("#btn2").click(function frontPage() {    // 上一页
+                direct = -1;
+                displayPage();
+            });
+            $("#btn3").click(function nextPage() {    // 下一页
+                direct = 1;
+                displayPage();
+            });
+            $("#btn4").click(function lastPage() {    // 尾页
+                curPage = page;
+                direct = 0;
+                displayPage();
+            });
+            $("#btn5").click(function changePage() {    // 转页
+                curPage = document.getElementById("changePage").value * 1;
+                if (!/^[1-9]\d*$/.test(curPage)) {
+                    alert("请输入正整数");
+                    return;
+                }
+                if (curPage > page) {
+                    alert("超出数据页面");
+                    return;
+                }
+                direct = 0;
+                displayPage();
+            });
+            $("#pageSizeSet").click(function setPageSize() {    // 设置每页显示多少条记录
+                pageSize = document.getElementById("pageSize").value;    //每页显示的记录条数
+                if (!/^[1-9]\d*$/.test(pageSize)) {
+
+                    return;
+                } else {
+                    if (parseInt(pageSize) < 2) {
+                        alert("请输入大于1的正整数");
+                        return;
+                    }
+                }
+                len = $("#courseInfoTable tr").length - 1;
+                page = len % pageSize == 0 ? len / pageSize : Math.floor(len / pageSize) + 1;//根据记录条数，计算页数
+                curPage = 1;        //当前页
+                direct = 0;        //方向
+                displayPage();
+            });
+        });
+
+        function pageFlipper() {
+            len = $("#courseInfoTable tr").length - 1;    // 求这个表的总行数，剔除第一行介绍
+            page = len % pageSize == 0 ? len / pageSize : Math.floor(len / pageSize) + 1;//根据记录条数，计算页数
+            curPage = 1;    // 设置当前为第一页
+            displayPage(1);//显示第一页
+            document.getElementById("btn0").innerHTML = "当前" + curPage + "/" + page + "页" + "   共 " + len + "条记录";    // 显示当前多少页
+            document.getElementById("pageSize").value = pageSize;
+        }
+
+        function displayPage() {
+            if (curPage <= 1 && direct == -1) {
+                direct = 0;
+                alert("已经是第一页了");
+                return;
+            } else if (curPage >= page && direct == 1) {
+                direct = 0;
+                alert("已经是最后一页了");
+                return;
+            }
+            lastPage = curPage;
+            // 修复当len=1时，curPage计算得0的bug
+            if (len > pageSize) {
+                curPage = ((curPage + direct + len) % len);
+            } else {
+                curPage = 1;
+            }
+            document.getElementById("btn0").innerHTML = "当前" + curPage + "/" + page + "页" + "   共 " + len + "条记录";    // 显示当前多少页
+            begin = (curPage - 1) * pageSize + 1;// 起始记录号
+            end = begin + parseInt(pageSize) - 1;    // 末尾记录号
+            if (end > len) end = len;
+            $("#courseInfoTable tr").hide();    // 首先，设置这行为隐藏
+            $("#courseInfoTable tr").each(function (i) {    // 然后，通过条件判断决定本行是否恢复显示
+                if ((i >= begin && i <= end) || i == 0)//显示begin<=x<=end的记录
+                    $(this).show();
+            });
+        }
+
+
+    </script>
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2 id="h2"></h2>
+    </div>
+    <!-- message listing panel -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel  heading-border">
+
+            <!-- message toolbar header -->
+            <div class="panel-menu">
+                <div class="row">
+
+                    <div class="hidden-xs hidden-sm col-md-3">
+                        <div class="btn-group" style="display: block">
+                            <button type="button" class="btn btn-default light" id="refreshInfo">
+                                <i class="fa fa-refresh"></i>
+                            </button>
+                            <a id="btn0"></a>
+                        </div>
+                        <div id="tableInfo"></div>
+                    </div>
+
+
+                    <div class="col-xs-12 col-md-9 text-right">
+
+
+                        <input id="pageSize" type="text" size="1" maxlength="2" value="getDefaultValue()"/><a> 条 </a> <a
+                            href="#" id="pageSizeSet">设置</a>&nbsp;
+                        <a id="sjzl"></a>&nbsp;
+
+                        <a>转到&nbsp;</a>
+                        <input id="changePage" type="text" size="1" maxlength="4"/>
+                        <a>页&nbsp;</a>
+                        <a href="#" id="btn5">跳转</a>
+
+                        <div class="btn-group">
+                            <button type="button" class="btn btn-default light" id="btn1" title="首页">
+                                <i class="glyphicon glyphicon-step-backward"></i>
+                            </button>
+                            <button type="button" class="btn btn-default light" id="btn2" title="上一页">
+                                <i class="fa fa-chevron-left"></i>
+                            </button>
+                            <button type="button" class="btn btn-default light" id="btn3" title="下一页">
+                                <i class="fa fa-chevron-right"></i>
+                            </button>
+                            <button type="button" class="btn btn-default light" id="btn4" title="尾页">
+                                <i class="glyphicon glyphicon-step-forward"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <!-- message listings table -->
+            <div class="panel-body pn">
+
+
+                <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+                    <thead>
+                    <tr>
+                        <th class="hidden-xs" style="text-align: center">序号</th>
+                        <th class="hidden-xs" style="text-align: center">课程</th>
+                        <th class="hidden-xs" style="text-align: center">教师</th>
+                        <th class="hidden-xs" style="text-align: center">章节</th>
+                        <th class="hidden-xs" style="text-align: center">截止提交时间</th>
+                        <th class="hidden-xs" style="text-align: center">操作</th>
+                    </tr>
+                    </thead>
+                    <tbody class="course_info_ajax">
+                    <tr class="message-unread"
+                        th:each="historyHomeWorkInfo,historyHomeWorkInfoStat : ${historyHomeWorkInfos}">
+                        <td class="homework_id" th:text="${historyHomeWorkInfo.homework_id}"
+                            style="text-align: center;display: none"></td>
+                        <td class="hidden-xs" style="text-align: center"
+                            th:text="${historyHomeWorkInfoStat.index}+1"></td>
+                        <td class="course_name" th:text="${historyHomeWorkInfo.course_name}"
+                            style="text-align: center"></td>
+                        <td class="teacher_name" th:text="${historyHomeWorkInfo.teacher_name}"
+                            style="text-align: center"></td>
+                        <td class="hidden-xs" th:text="${historyHomeWorkInfo.homework_chapter}"
+                            style="text-align: center"></td>
+                        <td class="hidden-xs" style="text-align: center"
+                            th:text="${historyHomeWorkInfo.submit_time}"></td>
+                        <td><a class="view" style="cursor: pointer">查看详情</a></td>
+                    </tr>
+
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<!-- end: .tray-center -->
+</body>
+</html>

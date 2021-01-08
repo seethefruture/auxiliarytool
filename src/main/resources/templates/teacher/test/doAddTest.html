@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+<div class="panel  heading-border">
+
+    <!-- message toolbar header -->
+    <div class="panel-menu">
+        <div class="row">
+
+            <div class="hidden-xs hidden-sm col-md-3">
+                <div class="btn-group" style="display: block">
+                    <button type="button" class="btn btn-default light" id="refreshInfo">
+                        <i class="fa fa-refresh"></i>
+                    </button>
+                    <a id="btn0"></a>
+                </div>
+                <div id="tableInfo"></div>
+            </div>
+        </div>
+
+    </div>
+    <!-- message listings table -->
+    <div class="panel-body pn">
+
+
+        <label class="radio-inline">
+        选择班级：<input type="radio" th:each="class:${course}" th:text="${class.class_name}+${class.class_number}+'班'" th:value="${class.class_id}" name="class">
+        </label>
+
+        <br/>
+        <br/>
+
+        选择出题方式:<input type="radio"  name="type" id="fixed">固定<input type="radio" name="type" id="random">随机
+        <div id="num" style="display: none">请输入随机的个数:<input type="text" id="testNum" ></div>
+        <script>
+            $(document).ready(function(){
+                $("#fixed").click(function () {
+                    $("#num").hide();
+                })
+                $("#random").click(function () {
+                    $("#num").show();
+                })
+            });
+        </script>
+        <br/>
+        <br/>
+        开始时间：<input type="date" id="startDay">:<input type="time" id="startTime">
+        结束时间：<input type="date" id="endDay">:<input type="time" id="endTime">
+        <br/>
+        <input type="button" onclick="addTest()" value="确定">
+        <script>
+            function addTest() {
+                var startDay = document.getElementById("startDay").value;
+                var startTime = document.getElementById("startTime").value;
+                var start = startDay+" "+startTime+":00";
+                var endDay = document.getElementById("endDay").value;
+                var endTime = document.getElementById("endTime").value;
+                var end = endDay+" "+endTime+":00";
+                var classes = document.getElementsByName("class");
+                // var question = document.getElementsByName("question");
+                // var questionContain=[];
+                var count=0;
+                // //统计所有题目id和总数
+                // for(var i=0;i<question.length;i++){
+                //     if(question[i].checked){
+                //         questionContain.push(question[i].value);
+                //         count++;
+                //     }
+                // }
+                //选出班级
+                for(var j=0;j<classes.length;j++){
+                    if(classes[j].checked){
+                        var classId = classes[j].value;
+                    }
+                }
+                var choice = document.getElementsByName("type");
+                var type;
+                //固定
+                if(choice[0].checked){
+                    type=0;
+                }
+                //随机
+                else if(choice[1].checked){
+                    type = document.getElementById("testNum").value;
+                }
+                if(type==0) {
+                    var mymessage = confirm("此次测试题目数固定，你确定吗？");
+                }
+                else{
+                    var mymessage = confirm("此次测试题目数随机，你确定吗？");
+                }
+                if(mymessage==true){
+                    $.ajax({
+                        type: "POST",
+                        url: "/teacher/test/insert",
+                        traditional: true,
+                        dataType: "json",
+                        data: {
+                            "start": start,
+                            "end":end,
+                            "type":type,
+                            //"questionContain":questionContain,
+                            "classId":classId
+                        },
+                        success: function (sign) {
+                            if(sign==1){
+                                alert("添加成功！");
+                            }
+                            else{
+                                alert("添加失败，请重试！");
+                            }
+                            location.reload(true);
+                        },
+                        error:function () {
+                            alert("错误");
+                        }
+
+                    })
+                }
+
+            }
+        </script>
+    </div>
+
+</div>
+
+</html>
+

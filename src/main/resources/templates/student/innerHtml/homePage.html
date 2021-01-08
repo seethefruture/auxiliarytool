@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>首页</title>
+
+</head>
+<body>
+这是首页
+<div th:text="欢迎+${student.studentName}+同学"></div>
+<div th:text="现在是您的第+${schoolYear}+学年第+${term}+学期"></div>
+
+
+本学期的所有课程：...
+<div class="panel-body pn" th:if="${courseInfos.size()}">
+    <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+        <thead>
+        <tr>
+            <th class="hidden-xs" style="text-align: center">序号</th>
+            <th class="hidden-xs" style="text-align: center">姓名</th>
+            <th class="hidden-xs" style="text-align: center">课程</th>
+            <th class="hidden-xs" style="text-align: center">教师</th>
+            <th class="hidden-xs" style="text-align: center">班级</th>
+            <th class="hidden-xs" style="text-align: center">时间</th>
+        </tr>
+        </thead>
+        <tbody class="course_info_ajax">
+        <tr class="message-unread" th:each="courseInfo,courseInfoStat : ${courseInfos}">
+            <td class="hidden-xs" style="text-align: center" th:text="${courseInfoStat.index}+1"></td>
+            <td class="student_name" th:text="${courseInfo.student_name}" style="text-align: center"></td>
+            <td class="course_name" th:text="${courseInfo.course_name}"
+                style="cursor:pointer;text-align: center;color:dodgerblue;text-decoration: underline"></td>
+            <td class="teacher_name" th:text="${courseInfo.teacher_name}" style="text-align: center"></td>
+            <td class="class_info" style="text-align: center"
+                th:text="${courseInfo.class_grade}+${courseInfo.class_name}+${courseInfo.class_number}+班"></td>
+            <td class="teach_time" th:text="${courseInfo.teach_time}" style="text-align: center"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:unless="${courseInfos.size()}" th:text="暂无"></div>
+
+
+其他课程...
+<div class="panel-body pn" th:if="${otherCourseInfo.size()}">
+    <table id="otherCourseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+        <thead>
+        <tr>
+            <th class="hidden-xs" style="text-align: center">序号</th>
+            <th class="hidden-xs" style="text-align: center">姓名</th>
+            <th class="hidden-xs" style="text-align: center">课程</th>
+            <th class="hidden-xs" style="text-align: center">教师</th>
+            <th class="hidden-xs" style="text-align: center">班级</th>
+            <th class="hidden-xs" style="text-align: center">时间</th>
+        </tr>
+        </thead>
+        <tbody class="course_info_ajax">
+        <tr class="message-unread" th:each="courseInfo,courseInfoStat : ${otherCourseInfo}">
+            <td class="hidden-xs" style="text-align: center" th:text="${courseInfoStat.index}+1"></td>
+            <td class="student_name" th:text="${courseInfo.student_name}" style="text-align: center"></td>
+            <td class="course_name" th:text="${courseInfo.course_name}"
+                style="cursor:pointer;text-align: center;color:dodgerblue;text-decoration: underline"></td>
+            <td class="teacher_name" th:text="${courseInfo.teacher_name}" style="text-align: center"></td>
+            <td class="class_info" style="text-align: center"
+                th:text="${courseInfo.class_grade}+${courseInfo.class_name}+${courseInfo.class_number}+班"></td>
+            <td class="teach_time" th:text="${courseInfo.teach_time}" style="text-align: center"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<div th:unless="${otherCourseInfo.size()}" th:text="暂无"></div>
+</body>
+</html>

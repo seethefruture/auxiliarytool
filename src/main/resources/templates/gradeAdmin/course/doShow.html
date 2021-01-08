@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<script src="/js/jquery.min.js"></script>
+<script src="/js/jquery.min.js"></script>
+        <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+            <thead>
+            <tr>
+                <th class="hidden-xs" style="text-align: center">序号</th>
+                <th class="hidden-xs" style="text-align: center">课程名</th>
+                <th class="hidden-xs" style="text-align: center">教师名</th>
+                <th class="hidden-xs" style="text-align: center">操作</th>
+            </tr>
+            </thead>
+            <tbody class="course_info_ajax">
+            <tr class="message-unread" th:each="list:${list.list}">
+                <td class="hidden-xs" style="text-align: center" th:text="${listStat.index}+1"></td>
+                <td  th:text="${list.course_name}" style="text-align: center"></td>
+                <td  th:text="${list.teacher_name}" style="text-align: center"></td>
+                <td style="text-align: center">
+                    <!--<a th:text="删除" class="delete" th:name="${list.course_id}" style="cursor: pointer"></a>-->
+                    <a th:href="@{'/gradeAdmin/course/edit?id='+${list.course_id}}">编辑</a>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+</html>

@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>课程资源信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+</head>
+<body>
+
+<!-- begin: .tray-center -->
+<div class="tray tray-center">
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2>添加选课</h2>
+        <h3>第二项</h3>
+    </div>
+    <!-- message listing panel -->
+    <form class="form-inline">
+        <div style="margin-left: 30px;margin-bottom: 15px" class="form-group">
+            <input type="text" id="className" value=""placeholder="只能搜索班级名，无班级号" class="form-control">
+            <input type="button" id="search" value="搜索班级" class="btn btn-default">
+        </div>
+    </form>
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;" id="list">
+
+        <script>
+            function list(name) {
+                $.ajax({
+                    type:"GET",
+                    url:"/gradeAdmin/teach/teachClassList",
+                    data:
+                        {
+                            "className":name
+                        },
+                    success: function(){
+                        window.location.href='/gradeAdmin/teach/show';
+                    },
+                    error:function () {
+                        $("#list").html("加载失败，请刷新重试！");
+                    }
+                });
+            }
+
+            $("#search").click(function () {
+                var name = document.getElementById("className").value;
+                list(name);
+            });
+
+        </script>
+        <!-- end: .admin-form -->
+    </div>
+
+</div>
+<!-- end: .tray-center -->
+</body>
+</html>

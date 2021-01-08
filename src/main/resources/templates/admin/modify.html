@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>修改个人信息</title>
+    <!-- Theme CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/skin/default_skin/css/theme.css">
+    <script src="/js/jquery-2.2.4.js"></script>
+    <!-- Admin Forms CSS -->
+    <link rel="stylesheet" type="text/css" href="/assets/admin-tools/admin-forms/css/admin-forms.css">
+
+    <!-- Favicon -->
+    <link rel="shortcut icon" href="/assets/img/favicon.ico">
+</head>
+<body>
+<div class="tray tray-center">
+
+    <!-- Begin: Content Header -->
+    <div class="content-header">
+        <h2> 编辑个人信息</h2>
+        <p class="lead"></p>
+    </div>
+
+    <!-- Validation Example -->
+    <div class="admin-form theme-primary mw1000 center-block" style="padding-bottom: 175px;">
+
+        <div class="panel heading-border">
+
+            <form method="post" action="list.html" id="admin-form">
+
+                <div class="panel-body bg-light">
+
+                    <div class="section-divider mt20 mb40">
+                        <span> 基本信息 </span>
+                    </div>
+                    <!-- .section-divider -->
+
+
+                    <script th:inline="javascript">
+                        $(document).ready(function (){
+                            document.getElementById("username").value=[[${admin.adminUsername}]];
+                            document.getElementById("name").value=[[${admin.adminName}]];
+                            document.getElementById("password").value=[[${admin.adminPassword}]];
+                        });
+
+                    </script>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            用户名:<input type="text" id="username">
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            姓名:<input type="text" id="name">
+                        </label>
+                    </div>
+                    <div class="section">
+                        <label  class="field prepend-icon">
+                            密码:<input type="text" id="password">
+                        </label>
+                    </div>
+
+
+                    <!-- end section -->
+
+                    <!-- end .form-body section -->
+                    <div class="panel-footer text-right">
+                        <input type="button" value="提交" class="btn btn-info" onclick="fun()">  </input>
+                    </div>
+                    <script th:inline="javascript">
+                        function fun() {
+                            var username = document.getElementById("username").value;
+                            var name = document.getElementById("name").value;
+                            var password = document.getElementById("password").value;
+                            var id = [[${admin.adminId}]];
+                            $.ajax({
+                                type: "GET",
+                                url: "/admin/doModify",
+                                dataType: "json",
+                                data: {
+                                    "userName": username,
+                                    "name": name,
+                                    "password": password,
+                                    "id":id
+                                },
+                                success: function (sign) {
+                                    if (sign==1) {
+                                        alert("修改成功！");
+                                    }else{
+                                        alert("修改失败，请重试！")
+                                    }
+                                },
+                                error:function (msg) {
+                                    alert("msg");
+                                }
+
+                            })
+                        }
+                    </script>
+                    <!-- end .form-footer section -->
+                </div>
+            </form>
+
+        </div>
+
+    </div>
+    <!-- end: .admin-form -->
+
+</div>
+</body>

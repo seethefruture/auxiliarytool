@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<link rel="stylesheet" type="text/css" href="/css/page.css">
+<script src="/js/jquery.min.js"></script>
+        <table id="courseInfoTable" class="table admin-form theme-warning tc-checkbox-1">
+            <thead>
+            <tr>
+                <th class="hidden-xs" style="text-align: center">序号</th>
+                <th class="hidden-xs" style="text-align: center">课程名</th>
+                <th class="hidden-xs" style="text-align: center">任课老师</th>
+                <th class="hidden-xs" style="text-align: center">班级</th>
+                <th class="hidden-xs" style="text-align: center">操作</th>
+            </tr>
+            </thead>
+            <tbody class="course_info_ajax">
+            <tr class="message-unread" th:each="list:${list.list}">
+                <td class="hidden-xs" style="text-align: center" th:text="${listStat.index}+1"></td>
+                <td  th:text="${list.course_name}" style="text-align: center"></td>
+                <td  th:text="${list.teacher_name}" style="text-align: center"></td>
+                <td  th:text="${list.class_grade}+${list.class_name}+${list.class_number}+'班'" style="text-align: center"></td>
+                <td  style="text-align: center">
+                    <!--<a th:text="删除" class="delete" th:name="${list.teach_id}" style="cursor: pointer"></a>-->
+                    <a th:text="编辑" class="edit" th:name="${list.teach_id}" style="cursor: pointer" th:href="@{'/gradeAdmin/teach/edit?teachId='+${list.teach_id}}"></a>
+                </td>
+            </tr>
+
+            </tbody>
+        </table>
+
+</html>
+
