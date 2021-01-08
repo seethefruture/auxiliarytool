@@ -10,7 +10,7 @@ on:
 jobs:
   build:
 
-    runs-on: test
+    runs-on: lable
 
     steps:
     - uses: actions/checkout@v2
