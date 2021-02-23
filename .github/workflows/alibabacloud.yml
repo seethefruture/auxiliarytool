@@ -38,6 +38,8 @@ jobs:
     steps:
     - name: Checkout
       uses: actions/checkout@v2
+    - name: build project
+      run: mvn clean package -DskipTests=true -Dmaven.javadoc.skip=true -B -V
     
     # 1.1 Login to ACR   
     - name: Login to ACR with the AccessKey pair
