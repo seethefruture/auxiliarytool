@@ -29,7 +29,7 @@ env:
   REGISTRY: registry.cn-beijing.aliyuncs.com
   NAMESPACE: w929732982
   IMAGE: mall-nacos
-  TAG: latest
+  TAG: ${{ github.sha }}
 
 jobs:
   build:
